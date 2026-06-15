@@ -10,7 +10,7 @@ public static Connection getConnection(){
 try{
 
 return DriverManager.getConnection(
-"jdbc:sqlite:srms.db"
+"jdbc:sqlite:databse/srms.db"
 );
 
 
