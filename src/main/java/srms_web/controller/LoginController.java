@@ -5,62 +5,64 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import srms_web.auth.Authentication;
+import org.springframework.ui.Model;
 
 @Controller
 public class LoginController {
 
-    @GetMapping("/")
-    public String loginPage() {
+        @GetMapping("/")
+public String loginPage() {
+    return "login";
+}
 
-        return "login";
+@GetMapping("/login")
+public String loginPageAgain() {
+    return "login";
+}
 
-    }
+  @PostMapping("/login")
+public String login(
 
-    @GetMapping("/login")
-    public String loginPageAgain() {
+        String username,
 
-        return "login";
+        String password,
 
-    }
+        HttpSession session,
 
-    @PostMapping("/login")
-    public String login(
+        Model model
 
-            String username,
+) {
 
-            String password,
+    System.out.println(
+            "LOGIN BUTTON CLICKED"
+    );
 
-            HttpSession session
+    Object studentId =
 
-    ) {
-
-        System.out.println(
-                "LOGIN BUTTON CLICKED"
-        );
-
-        Object studentId =
-
-                Authentication.login(
-                        username,
-                        password
-                );
-
-        if (studentId != null) {
-
-            session.setAttribute(
-                    "studentId",
-                    studentId
+            Authentication.login(
+                    username,
+                    password
             );
 
-            return
-                    "redirect:/student/dashboard";
+    if (studentId != null) {
 
-        }
+        session.setAttribute(
+                "studentId",
+                studentId
+        );
 
         return
-                "redirect:/";
+                "redirect:/student/dashboard";
 
     }
+
+    model.addAttribute(
+            "error",
+            "Your username or password is incorrect"
+    );
+
+    return "login";
+}
 
     // =========================
     // LOGOUT
