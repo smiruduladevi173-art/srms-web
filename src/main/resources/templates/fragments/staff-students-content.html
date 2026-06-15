@@ -1,33 +1,671 @@
-<h2>Students</h2>
+<!DOCTYPE html>
 
-<table border="1">
+<html xmlns:th="http://www.thymeleaf.org">
 
-    <thead>
-    <tr>
-        <th>Roll No</th>
-        <th>Name</th>
-        <th>Gender</th>
-        <th>DOB</th>
-        <th>Department</th>
-    </tr>
-    </thead>
+<div class="students-module">
 
-    <tbody>
+<!-- HEADER -->
 
-    <tr th:each="student : ${students}">
+<div class="students-header">
 
-        <td th:text="${student.rollNumber}"></td>
+<div>
 
-        <td th:text="${student.name}"></td>
+<h2 class="title">
 
-        <td th:text="${student.gender}"></td>
+STUDENTS LIST
 
-        <td th:text="${student.dob}"></td>
+</h2>
 
-        <td th:text="${student.department}"></td>
+<div
+id="modeLabel"
+class="mode-label">
 
-    </tr>
+VIEW MODE
 
-    </tbody>
+</div>
+
+</div>
+
+<div class="header-right">
+
+<div class="search-box">
+
+<input
+type="text"
+
+id="studentSearch"
+
+placeholder="Search student..."
+
+onkeyup="filterStudents()"
+
+>
+
+<span class="search-icon">
+
+⌕
+
+</span>
+
+</div>
+
+<button
+
+type="button"
+
+class="edit-btn"
+
+onclick="enableEdit()"
+
+>
+
+Edit
+
+</button>
+
+</div>
+
+</div>
+
+<!-- FORM -->
+
+<form
+
+id="studentForm"
+
+th:action="@{/staff/students/save}"
+
+method="post"
+
+>
+
+<div class="table-card">
+
+<table id="studentTable">
+
+<thead>
+
+<tr>
+
+<th>Roll No</th>
+
+<th>Name</th>
+
+<th>Gender</th>
+
+<th>DOB</th>
+
+<th>Department</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr
+th:each="student : ${students}"
+
+>
+
+<!-- ROLL -->
+
+<td>
+
+<input
+
+readonly
+
+class="readonly"
+
+name="rollNumber"
+
+th:value="${student.rollNumber}"
+
+>
+
+</td>
+
+<!-- NAME -->
+
+<td>
+
+<input
+
+disabled
+
+class="editable"
+
+name="name"
+
+th:value="${student.name}"
+
+>
+
+</td>
+
+<!-- GENDER -->
+
+<td>
+
+<select
+
+disabled
+
+class="editable"
+
+name="gender"
+
+>
+
+<option
+
+value="Male"
+
+th:selected="${student.gender=='Male'}"
+
+>
+
+Male
+
+</option>
+
+<option
+
+value="Female"
+
+th:selected="${student.gender=='Female'}"
+
+>
+
+Female
+
+</option>
+
+</select>
+
+</td>
+
+<!-- DOB -->
+
+<td>
+
+<input
+
+disabled
+
+class="editable"
+
+type="date"
+
+name="dob"
+
+th:value="${student.dob}"
+
+>
+
+</td>
+
+<!-- DEPARTMENT -->
+
+<td>
+
+<input
+
+readonly
+
+class="readonly"
+
+name="department"
+
+th:value="${student.department}"
+
+>
+
+</td>
+
+</tr>
+
+</tbody>
 
 </table>
+
+</div>
+
+<div class="action-bar">
+
+<button
+
+type="button"
+
+class="cancel-btn"
+
+onclick="cancelEdit()"
+
+>
+
+Cancel
+
+</button>
+
+<button
+
+type="submit"
+
+id="saveBtn"
+
+class="save-btn"
+
+disabled
+
+>
+
+Save Changes
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+<style>
+
+.students-module{
+
+padding:34px;
+
+background:#F8FAFC;
+
+height:100%;
+
+overflow:auto;
+
+}
+
+.students-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:flex-start;
+
+margin-bottom:26px;
+
+}
+
+.header-right{
+
+display:flex;
+
+gap:14px;
+
+align-items:center;
+
+}
+
+.title{
+
+font-size:30px;
+
+font-weight:700;
+
+color:#0F172A;
+
+}
+
+.mode-label{
+
+margin-top:10px;
+
+display:inline-block;
+
+padding:8px 14px;
+
+background:#EEF2FF;
+
+color:#2563EB;
+
+border-radius:999px;
+
+font-size:12px;
+
+font-weight:700;
+
+}
+
+/* SEARCH */
+
+.search-box{
+
+position:relative;
+
+width:340px;
+
+}
+
+.search-box input{
+
+width:100%;
+
+padding:14px 50px 14px 18px;
+
+border:1px solid #DCE1E6;
+
+border-radius:14px;
+
+}
+
+.search-icon{
+
+position:absolute;
+
+right:18px;
+
+top:50%;
+
+transform:translateY(-50%);
+
+}
+
+/* TABLE */
+
+.table-card{
+
+background:white;
+
+border-radius:18px;
+
+padding:20px;
+
+border:1px solid #E5E7EB;
+
+box-shadow:
+
+0 8px 30px rgba(0,0,0,.05);
+
+overflow:auto;
+
+}
+
+table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+thead{
+
+background:
+
+linear-gradient(
+90deg,
+#2563EB,
+#3B82F6
+);
+
+}
+
+thead th{
+
+padding:18px;
+
+color:white;
+
+text-align:left;
+
+}
+
+tbody td{
+
+padding:14px;
+
+border-bottom:
+
+1px solid #EEF2F7;
+
+}
+
+/* INPUTS */
+
+.readonly,
+
+.editable{
+
+width:100%;
+
+padding:12px;
+
+font-size:14px;
+
+border-radius:10px;
+
+}
+
+.readonly{
+
+background:#F1F5F9;
+
+border:none;
+
+color:#64748B;
+
+}
+
+.editable{
+
+background:transparent;
+
+border:1px solid transparent;
+
+}
+
+.editable:not(:disabled){
+
+background:white;
+
+border:1px solid #2563EB;
+
+}
+
+.editable:focus{
+
+outline:none;
+
+box-shadow:
+
+0 0 0 3px
+
+rgba(
+37,
+99,
+235,
+0.12
+);
+
+}
+
+/* ACTION */
+
+.action-bar{
+
+display:flex;
+
+justify-content:flex-end;
+
+gap:14px;
+
+margin-top:20px;
+
+}
+
+.edit-btn,
+
+.cancel-btn,
+
+.save-btn{
+
+padding:13px 22px;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-weight:700;
+
+}
+
+.edit-btn{
+
+background:#2563EB;
+
+color:white;
+
+}
+
+.cancel-btn{
+
+background:#E2E8F0;
+
+}
+
+.save-btn{
+
+background:#0F172A;
+
+color:white;
+
+}
+
+.save-btn:disabled{
+
+opacity:.4;
+
+cursor:not-allowed;
+
+}
+
+</style>
+
+<script>
+
+function filterStudents(){
+
+let search=
+
+document
+.getElementById(
+"studentSearch"
+)
+.value
+.trim()
+.toLowerCase();
+
+let rows=
+
+document
+.querySelectorAll(
+"#studentTable tbody tr"
+);
+
+rows.forEach(row=>{
+
+let cells=
+
+row.querySelectorAll(
+"td"
+);
+
+let searchable="";
+
+cells.forEach(cell=>{
+
+let input=
+
+cell.querySelector(
+"input,select"
+);
+
+if(input){
+
+searchable+=
+(
+input.value || ""
+)
+.toLowerCase()
++" ";
+
+}
+
+else{
+
+searchable+=
+(
+cell.textContent || ""
+)
+.toLowerCase()
++" ";
+
+}
+
+});
+
+row.style.display=
+
+searchable.includes(search)
+
+?
+
+""
+
+:
+
+"none";
+
+});
+
+}
+
+function enableEdit(){
+
+document
+.querySelectorAll(
+".editable"
+)
+.forEach(
+
+x=>x.disabled=false
+
+);
+
+document
+.getElementById(
+"saveBtn"
+)
+.disabled=false;
+
+document
+.getElementById(
+"modeLabel"
+)
+.innerText=
+
+"EDIT MODE";
+
+}
+
+function cancelEdit(){
+
+location.reload();
+
+}
+
+</script>
+
+</html>

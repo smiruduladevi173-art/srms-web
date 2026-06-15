@@ -315,8 +315,10 @@ th:href="@{/logout}">
 
 th:if="${content != null}"
 
-th:replace="~{${content}}">
+<div class="content-area">
 
+<div th:replace="~{${content}}"></div>
+</div>
 </div>
 
 <div th:if="${content == null}">

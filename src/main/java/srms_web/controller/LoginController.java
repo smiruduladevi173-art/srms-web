@@ -12,19 +12,25 @@ import srms_web.model.UserSession;
 @Controller
 public class LoginController {
 
+    // =========================
+    // LOGIN PAGE
+    // =========================
+
     @GetMapping("/")
     public String loginPage() {
 
         return "login";
-
     }
 
     @GetMapping("/login")
     public String loginPageAgain() {
 
         return "login";
-
     }
+
+    // =========================
+    // LOGIN
+    // =========================
 
     @PostMapping("/login")
     public String login(
@@ -37,57 +43,65 @@ public class LoginController {
 
     ) {
 
-        System.out.println(
-                "LOGIN BUTTON CLICKED"
-        );
-
         UserSession user =
                 Authentication.login(
                         username,
                         password
                 );
 
-        if (user != null) {
+        if (user == null) {
 
-            session.setAttribute(
-                    "user",
-                    user
-            );
+            return "redirect:/";
+        }
 
-            if (
-                    user.getRole().equalsIgnoreCase(
-                            "STUDENT"
-                    )
-            ) {
+        session.setAttribute(
+                "user",
+                user
+        );
 
-                return "redirect:/student/dashboard";
+        // =========================
+        // STUDENT
+        // =========================
 
-            }
+        if (
+                user.getRole()
+                        .equalsIgnoreCase(
+                                "STUDENT"
+                        )
+        ) {
 
-            if (
-                    user.getRole().equalsIgnoreCase(
-                            "STAFF"
-                    )
-            ) {
+            return "redirect:/student/dashboard";
+        }
 
-                return "redirect:/staff-dashboard";
+        // =========================
+        // STAFF
+        // =========================
 
-            }
+        if (
+                user.getRole()
+                        .equalsIgnoreCase(
+                                "STAFF"
+                        )
+        ) {
 
-            if (
-                    user.getRole().equalsIgnoreCase(
-                            "ADMIN"
-                    )
-            ) {
+            return "redirect:/staff";
+        }
 
-                return "redirect:/admin";
+        // =========================
+        // ADMIN
+        // =========================
 
-            }
+        if (
+                user.getRole()
+                        .equalsIgnoreCase(
+                                "ADMIN"
+                        )
+        ) {
 
+            return "redirect:/admin";
         }
 
         return "redirect:/";
-
     }
 
     // =========================
@@ -104,7 +118,6 @@ public class LoginController {
         session.invalidate();
 
         return "redirect:/";
-
     }
 
 }

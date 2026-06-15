@@ -3,77 +3,224 @@ package srms_web.staff;
 import srms_web.database.DBConnection;
 import srms_web.model.StudentInfo;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import srms_web.staff.StaffService;
-
 @Service
 public class StaffService {
 
-    public List<StudentInfo> getAllStudents() {
 
-        List<StudentInfo> students =
-                new ArrayList<>();
+// =========================
+// GET STUDENTS
+// =========================
 
-        try {
+public List<StudentInfo> getAllStudents() {
 
-            Connection con =
-                    DBConnection.getConnection();
+    List<StudentInfo> students =
+            new ArrayList<>();
 
-            String sql =
-                    """
-                    SELECT
-                    s.student_id,
-                    s.roll_number,
-                    s.name,
-                    s.gender,
-                    s.dob,
-                    d.department_name
-                    FROM students s
-                    JOIN departments d
-                    ON s.department_id=d.id
-                    """;
+    try {
 
-            PreparedStatement pst =
-                    con.prepareStatement(sql);
+        Connection con =
+                DBConnection.getConnection();
 
-            ResultSet rs =
-                    pst.executeQuery();
+        String sql =
+                """
+                SELECT
 
-            while(rs.next()) {
+                s.student_id,
 
-                StudentInfo student =
-                        new StudentInfo();
+                s.roll_number,
 
-                student.setStudentId(
-                        rs.getInt("student_id"));
+                s.name,
 
-                student.setRollNumber(
-                        rs.getString("roll_number"));
+                s.gender,
 
-                student.setName(
-                        rs.getString("name"));
+                s.dob,
 
-                student.setGender(
-                        rs.getString("gender"));
+                d.department_name
 
-                student.setDob(
-                        rs.getString("dob"));
+                FROM students s
 
-                student.setDepartment(
-                        rs.getString("department_name"));
+                JOIN departments d
 
-                students.add(student);
-            }
+                ON s.department_id=d.id
+                """;
 
-        } catch(Exception e) {
-            e.printStackTrace();
+        PreparedStatement pst =
+                con.prepareStatement(
+                        sql
+                );
+
+        ResultSet rs =
+                pst.executeQuery();
+
+        while (
+
+                rs.next()
+
+        ) {
+
+            StudentInfo student =
+                    new StudentInfo();
+
+            student.setStudentId(
+
+                    rs.getInt(
+                            "student_id"
+                    )
+
+            );
+
+            student.setRollNumber(
+
+                    rs.getString(
+                            "roll_number"
+                    )
+
+            );
+
+            student.setName(
+
+                    rs.getString(
+                            "name"
+                    )
+
+            );
+
+            student.setGender(
+
+                    rs.getString(
+                            "gender"
+                    )
+
+            );
+
+            student.setDob(
+
+                    rs.getString(
+                            "dob"
+                    )
+
+            );
+
+            student.setDepartment(
+
+                    rs.getString(
+                            "department_name"
+                    )
+
+            );
+
+            students.add(
+                    student
+            );
+
         }
 
-        return students;
     }
+
+    catch (
+
+            Exception e
+
+    ) {
+
+        e.printStackTrace();
+
+    }
+
+    return students;
+
+}
+
+// =========================
+// SAVE ALL
+// =========================
+
+public void updateStudents(
+
+List<String> rollNumbers,
+
+List<String> names,
+
+List<String> genders,
+
+List<String> dobs
+
+){
+
+try{
+
+Connection con =
+DBConnection.getConnection();
+
+String sql =
+"""
+UPDATE students
+
+SET
+
+name=?,
+gender=?,
+dob=?
+
+WHERE roll_number=?
+
+""";
+
+PreparedStatement pst =
+con.prepareStatement(
+sql
+);
+
+for(
+
+int i=0;
+
+i<rollNumbers.size();
+
+i++
+
+){
+
+pst.setString(
+1,
+names.get(i)
+);
+
+pst.setString(
+2,
+genders.get(i)
+);
+
+pst.setString(
+3,
+dobs.get(i)
+);
+
+pst.setString(
+4,
+rollNumbers.get(i)
+);
+
+pst.executeUpdate();
+
+}
+
+}
+
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+}
 }
