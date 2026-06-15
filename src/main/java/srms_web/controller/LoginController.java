@@ -5,62 +5,54 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import srms_web.auth.Authentication;
+import org.springframework.ui.Model;
 
 @Controller
 public class LoginController {
 
-    @GetMapping("/")
-    public String loginPage() {
+  @PostMapping("/login")
+public String login(
 
-        return "login";
+        String username,
 
-    }
+        String password,
 
-    @GetMapping("/login")
-    public String loginPageAgain() {
+        HttpSession session,
 
-        return "login";
+        Model model
 
-    }
+) {
 
-    @PostMapping("/login")
-    public String login(
+    System.out.println(
+            "LOGIN BUTTON CLICKED"
+    );
 
-            String username,
+    Object studentId =
 
-            String password,
-
-            HttpSession session
-
-    ) {
-
-        System.out.println(
-                "LOGIN BUTTON CLICKED"
-        );
-
-        Object studentId =
-
-                Authentication.login(
-                        username,
-                        password
-                );
-
-        if (studentId != null) {
-
-            session.setAttribute(
-                    "studentId",
-                    studentId
+            Authentication.login(
+                    username,
+                    password
             );
 
-            return
-                    "redirect:/student/dashboard";
+    if (studentId != null) {
 
-        }
+        session.setAttribute(
+                "studentId",
+                studentId
+        );
 
         return
-                "redirect:/";
+                "redirect:/student/dashboard";
 
     }
+
+    model.addAttribute(
+            "error",
+            "Your username or password is incorrect"
+    );
+
+    return "login";
+}
 
     // =========================
     // LOGOUT

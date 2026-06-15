@@ -291,6 +291,31 @@ th:text="${error}">
 
 
 </div>
+<div
+id="errorBox"
+class="error"
+th:if="${error}"
+th:text="${error}">
+</div>
+<script>
+
+setTimeout(() => {
+
+    const errorBox =
+        document.getElementById(
+            "errorBox"
+        );
+
+    if(errorBox){
+
+        errorBox.style.display =
+            "none";
+
+    }
+
+}, 5000);
+
+</script>
 
 </body>
 
