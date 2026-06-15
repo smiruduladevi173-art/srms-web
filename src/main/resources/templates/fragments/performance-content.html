@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+<title>Performance Dashboard</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#F8FAFC;
+}
+
+/* =========================
+   MAIN WRAPPER
+========================= */
+
+.performance-wrapper{
+    display:flex;
+    justify-content:center;
+    padding:40px;
+}
+
+/* =========================
+   DASHBOARD CARD
+========================= */
+
+.performance-card{
+
+    width:850px;
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:40px;
+
+    border:1px solid #E2E8F0;
+
+    box-shadow:
+    0 8px 24px rgba(15,23,42,.06);
+
+    animation:fadeIn .5s ease;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header{
+    text-align:center;
+}
+
+.icon{
+
+    font-size:60px;
+
+    margin-bottom:12px;
+}
+
+.title{
+
+    font-size:30px;
+
+    font-weight:700;
+
+    color:#0F172A;
+}
+
+.subtitle{
+
+    margin-top:10px;
+
+    color:#64748B;
+
+    font-size:15px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:22px;
+
+    margin-top:40px;
+}
+
+/* =========================
+   METRIC CARD
+========================= */
+
+.metric-card{
+
+    background:white;
+
+    border:1px solid #E2E8F0;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    transition:.3s;
+}
+
+.metric-card:hover{
+
+    transform:translateY(-6px);
+
+    box-shadow:
+    0 10px 25px rgba(37,99,235,.12);
+
+    border-color:#BFDBFE;
+}
+
+.metric-icon{
+
+    font-size:32px;
+
+    margin-bottom:15px;
+}
+
+.metric-value{
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#2563EB;
+
+    margin-bottom:10px;
+}
+
+.metric-label{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#475569;
+}
+
+/* =========================
+   PERFORMANCE CARD COLORS
+========================= */
+
+.performance-status{
+
+    color:#10B981;
+}
+
+/* =========================
+   STANDING SECTION
+========================= */
+
+.standing-box{
+
+    margin-top:35px;
+
+    background:#F8FAFC;
+
+    border:1px solid #E2E8F0;
+
+    border-radius:16px;
+
+    padding:24px;
+
+    text-align:center;
+}
+
+.standing-title{
+
+    font-size:15px;
+
+    font-weight:600;
+
+    color:#64748B;
+
+    margin-bottom:10px;
+}
+
+.standing-status{
+
+    font-size:24px;
+
+    font-weight:700;
+
+    color:#10B981;
+}
+
+/* =========================
+   STATUS BAR
+========================= */
+
+.status{
+
+    margin-top:25px;
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    color:#10B981;
+}
+
+/* =========================
+   ANIMATION
+========================= */
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .performance-card{
+        width:100%;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="performance-wrapper">
+
+<div class="performance-card">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="icon">
+            📊
+        </div>
+
+        <div class="title">
+            Performance Dashboard
+        </div>
+
+        <div class="subtitle">
+            Academic Analytics Overview
+        </div>
+
+    </div>
+
+    <!-- GRID -->
+
+    <div class="stats-grid">
+
+        <!-- Average Marks -->
+
+        <div class="metric-card">
+
+            <div class="metric-icon">
+                📈
+            </div>
+
+            <div
+                class="metric-value"
+                th:text="${averageMarks}">
+            </div>
+
+            <div class="metric-label">
+                Average Marks
+            </div>
+
+        </div>
+
+        <!-- Total Subjects -->
+
+        <div class="metric-card">
+
+            <div class="metric-icon">
+                📚
+            </div>
+
+            <div
+                class="metric-value"
+                th:text="${totalSubjects}">
+            </div>
+
+            <div class="metric-label">
+                Total Subjects
+            </div>
+
+        </div>
+
+        <!-- Pass Percentage -->
+
+        <div class="metric-card">
+
+            <div class="metric-icon">
+                ✅
+            </div>
+
+            <div
+                class="metric-value"
+                th:text="${passPercentage + '%'}">
+            </div>
+
+            <div class="metric-label">
+                Pass Percentage
+            </div>
+
+        </div>
+
+        <!-- Performance -->
+
+        <div class="metric-card">
+
+            <div class="metric-icon">
+                🏆
+            </div>
+
+            <div
+                class="metric-value performance-status"
+                th:text="${performance}">
+            </div>
+
+            <div class="metric-label">
+                Performance
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- STANDING -->
+
+    <div class="standing-box">
+
+        <div class="standing-title">
+            Academic Standing
+        </div>
+
+        <div class="standing-status">
+
+            <span th:if="${performance == 'Excellent'}">
+                🌟 Outstanding Performer
+            </span>
+
+            <span th:if="${performance == 'Good'}">
+                ⭐ Strong Performance
+            </span>
+
+            <span th:if="${performance == 'Average'}">
+                📘 Satisfactory Progress
+            </span>
+
+            <span th:if="${performance == 'Poor'}">
+                ⚠ Needs Improvement
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER STATUS -->
+
+    
+
+</div>
+
+</div>
+
+</body>
+</html>
+
