@@ -1,10 +1,13 @@
 package srms_web.controller;
 
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
 import srms_web.auth.Authentication;
+import srms_web.model.UserSession;
 
 @Controller
 public class LoginController {
@@ -38,27 +41,52 @@ public class LoginController {
                 "LOGIN BUTTON CLICKED"
         );
 
-        Object studentId =
-
+        UserSession user =
                 Authentication.login(
                         username,
                         password
                 );
 
-        if (studentId != null) {
+        if (user != null) {
 
             session.setAttribute(
-                    "studentId",
-                    studentId
+                    "user",
+                    user
             );
 
-            return
-                    "redirect:/student/dashboard";
+            if (
+                    user.getRole().equalsIgnoreCase(
+                            "STUDENT"
+                    )
+            ) {
+
+                return "redirect:/student/dashboard";
+
+            }
+
+            if (
+                    user.getRole().equalsIgnoreCase(
+                            "STAFF"
+                    )
+            ) {
+
+                return "redirect:/staff-dashboard";
+
+            }
+
+            if (
+                    user.getRole().equalsIgnoreCase(
+                            "ADMIN"
+                    )
+            ) {
+
+                return "redirect:/admin";
+
+            }
 
         }
 
-        return
-                "redirect:/";
+        return "redirect:/";
 
     }
 

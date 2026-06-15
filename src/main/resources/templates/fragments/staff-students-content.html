@@ -1,0 +1,33 @@
+<h2>Students</h2>
+
+<table border="1">
+
+    <thead>
+    <tr>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>DOB</th>
+        <th>Department</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr th:each="student : ${students}">
+
+        <td th:text="${student.rollNumber}"></td>
+
+        <td th:text="${student.name}"></td>
+
+        <td th:text="${student.gender}"></td>
+
+        <td th:text="${student.dob}"></td>
+
+        <td th:text="${student.department}"></td>
+
+    </tr>
+
+    </tbody>
+
+</table>

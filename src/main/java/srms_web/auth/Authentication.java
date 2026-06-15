@@ -5,9 +5,11 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import srms_web.model.UserSession;
+
 public class Authentication {
 
-    public static Integer login(
+    public static UserSession login(
 
             String username,
 
@@ -51,19 +53,13 @@ public class Authentication {
             if (rs.next()) {
 
                 String dbPassword =
-                        rs.getString(
-                                "password"
-                        );
+                        rs.getString("password");
 
                 String role =
-                        rs.getString(
-                                "role"
-                        );
+                        rs.getString("role");
 
                 int userId =
-                        rs.getInt(
-                                "id"
-                        );
+                        rs.getInt("id");
 
                 boolean valid = false;
 
@@ -99,46 +95,58 @@ public class Authentication {
 
                 }
 
-                if (
+                if (valid) {
 
-                        valid
+                    Integer studentId = null;
 
-                        &&
+                    if (
 
-                        role.equals(
-                                "STUDENT"
-                        )
+                            role.equals(
+                                    "STUDENT"
+                            )
 
-                ) {
+                    ) {
 
-                    String studentSql = """
+                        String studentSql = """
 
-                            SELECT student_id
-                            FROM students
-                            WHERE user_id = ?
+                                SELECT student_id
+                                FROM students
+                                WHERE user_id = ?
 
-                            """;
+                                """;
 
-                    PreparedStatement ps2 =
-                            conn.prepareStatement(
-                                    studentSql
-                            );
+                        PreparedStatement ps2 =
+                                conn.prepareStatement(
+                                        studentSql
+                                );
 
-                    ps2.setInt(
-                            1,
-                            userId
-                    );
-
-                    ResultSet rs2 =
-                            ps2.executeQuery();
-
-                    if (rs2.next()) {
-
-                        return rs2.getInt(
-                                "student_id"
+                        ps2.setInt(
+                                1,
+                                userId
                         );
 
+                        ResultSet rs2 =
+                                ps2.executeQuery();
+
+                        if (rs2.next()) {
+
+                            studentId =
+                                    rs2.getInt(
+                                            "student_id"
+                                    );
+                        }
                     }
+
+                    return new UserSession(
+
+                            userId,
+
+                            username,
+
+                            role
+
+
+                    );
                 }
             }
 
