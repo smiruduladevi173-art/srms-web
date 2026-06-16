@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import srms_web.auth.Authentication;
-import srms_web.model.UserSession;
 
 @Controller
 public class LoginController {
@@ -20,88 +19,55 @@ public class LoginController {
     public String loginPage() {
 
         return "login";
+
     }
 
     @GetMapping("/login")
     public String loginPageAgain() {
 
         return "login";
+
     }
 
-    // =========================
-    // LOGIN
-    // =========================
+  @PostMapping("/login")
+public String login(
 
-    @PostMapping("/login")
-    public String login(
+        String username,
 
-            String username,
+        String password,
 
-            String password,
+        HttpSession session,
 
-            HttpSession session
+        Model model
 
-    ) {
+) {
 
-        UserSession user =
+        System.out.println(
+                "LOGIN BUTTON CLICKED"
+        );
+
+        Object studentId =
+
                 Authentication.login(
                         username,
                         password
                 );
 
-        if (user == null) {
+        if (studentId != null) {
 
-            return "redirect:/";
+            session.setAttribute(
+                    "studentId",
+                    studentId
+            );
+
+            return
+                    "redirect:/student/dashboard";
+
         }
 
-        session.setAttribute(
-                "user",
-                user
-        );
+        return
+                "redirect:/";
 
-        // =========================
-        // STUDENT
-        // =========================
-
-        if (
-                user.getRole()
-                        .equalsIgnoreCase(
-                                "STUDENT"
-                        )
-        ) {
-
-            return "redirect:/student/dashboard";
-        }
-
-        // =========================
-        // STAFF
-        // =========================
-
-        if (
-                user.getRole()
-                        .equalsIgnoreCase(
-                                "STAFF"
-                        )
-        ) {
-
-            return "redirect:/staff";
-        }
-
-        // =========================
-        // ADMIN
-        // =========================
-
-        if (
-                user.getRole()
-                        .equalsIgnoreCase(
-                                "ADMIN"
-                        )
-        ) {
-
-            return "redirect:/admin";
-        }
-
-        return "redirect:/";
     }
 
     // =========================
@@ -121,3 +87,4 @@ public class LoginController {
     }
 
 }
+
