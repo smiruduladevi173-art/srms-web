@@ -3,19 +3,15 @@ package srms_web.controller;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import org.springframework.ui.Model;
-
 import srms_web.auth.Authentication;
+import srms_web.model.UserSession;
 
 @Controller
 public class LoginController {
-
-    // =========================
-    // LOGIN PAGE
-    // =========================
 
     @GetMapping("/")
     public String loginPage() {
@@ -25,56 +21,115 @@ public class LoginController {
     }
 
     @GetMapping("/login")
-    public String loginPageAgain() {
+    public String loginPageAgain()
+    
+    {
 
         return "login";
 
     }
 
-  @PostMapping("/login")
-public String login(
+    @PostMapping("/login")
+    public String login(
 
-        String username,
+            String username,
 
-        String password,
+            String password,
 
-        HttpSession session,
+            HttpSession session,
 
-        Model model
+            Model model
 
-) {
+    ) {
 
         System.out.println(
                 "LOGIN BUTTON CLICKED"
         );
 
-        Object studentId =
+        UserSession user =
 
                 Authentication.login(
                         username,
                         password
                 );
+if (user == null) {
 
-        if (studentId != null) {
+    model.addAttribute(
+            "error",
+            "Invalid username or password"
+    );
 
-            session.setAttribute(
-                    "studentId",
-                    studentId
-            );
+    return "login";
+
+}
+
+        session.setAttribute(
+                "user",
+                user
+        );
+
+        session.setAttribute(
+                "userId",
+                user.getUserId()
+        );
+
+        session.setAttribute(
+                "username",
+                user.getUsername()
+        );
+
+        session.setAttribute(
+                "role",
+                user.getRole()
+        );
+
+        // STUDENT LOGIN
+
+        if (
+
+                user.getRole().equalsIgnoreCase(
+                        "STUDENT"
+                )
+
+        ) {
+
+            
+return "redirect:/student/student-dashboard";
+        }
+
+        // STAFF LOGIN
+
+        if (
+
+                user.getRole().equalsIgnoreCase(
+                        "STAFF"
+                )
+
+        ) {
 
             return
-                    "redirect:/student/dashboard";
+                    "redirect:/staff/students";
 
         }
 
-        return
-                "redirect:/";
+        // ADMIN LOGIN
+
+        if (
+
+                user.getRole().equalsIgnoreCase(
+                        "ADMIN"
+                )
+
+        ) {
+
+            return
+                    "redirect:/admin/dashboard";
+
+        }
+
+        return "redirect:/";
 
     }
-
-    // =========================
-    // LOGOUT
-    // =========================
 
     @GetMapping("/logout")
     public String logout(
@@ -86,7 +141,6 @@ public String login(
         session.invalidate();
 
         return "redirect:/";
+
     }
-
 }
-
