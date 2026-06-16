@@ -97,8 +97,6 @@ public class Authentication {
 
                 if (valid) {
 
-                    Integer studentId = null;
-
                     if (
 
                             role.equals(
@@ -129,11 +127,6 @@ public class Authentication {
                                 ps2.executeQuery();
 
                         if (rs2.next()) {
-
-                            studentId =
-                                    rs2.getInt(
-                                            "student_id"
-                                    );
                         }
                     }
 

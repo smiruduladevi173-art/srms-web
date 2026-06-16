@@ -1,1 +1,494 @@
-<h2>Staff Analytics Content Panel</h2>
+
+<style>
+
+.analytics-card{
+    padding:35px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.section-header{
+
+    background:
+    linear-gradient(
+    135deg,
+    #2563EB,
+    #3B82F6
+    );
+
+    padding:28px;
+
+    border-radius:20px;
+
+    color:white;
+
+    margin-bottom:25px;
+
+    box-shadow:
+    0 10px 25px rgba(37,99,235,.15);
+}
+
+.section-header h2{
+    color:white;
+    margin-bottom:8px;
+}
+
+.section-header p{
+    color:#DBEAFE;
+}
+
+/* =========================
+   FILTER
+========================= */
+
+.analytics-filter{
+
+    display:flex;
+
+    gap:15px;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+}
+
+.analytics-filter select{
+
+    padding:14px 18px;
+
+    border:1px solid #CBD5E1;
+
+    border-radius:14px;
+
+    min-width:260px;
+
+    background:white;
+
+    font-size:14px;
+
+    outline:none;
+}
+
+.analytics-filter button{
+
+    background:#2563EB;
+
+    color:white;
+
+    border:none;
+
+    padding:14px 24px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.analytics-filter button:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 8px 20px rgba(37,99,235,.25);
+}
+
+.analytics-divider{
+
+    margin:35px 0;
+
+    border-top:1px solid #E2E8F0;
+}
+
+.section-title{
+
+    color:#0F172A;
+
+    margin-bottom:20px;
+}
+
+/* =========================
+   SUMMARY CARDS
+========================= */
+
+.analytics-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+}
+
+.analytics-box{
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    box-shadow:
+    0 8px 20px rgba(0,0,0,.05);
+
+    transition:.3s;
+}
+
+.analytics-box:hover{
+
+    transform:translateY(-5px);
+}
+
+.analytics-box span{
+
+    color:#64748B;
+
+    font-size:13px;
+}
+
+.analytics-box h3{
+
+    margin-top:12px;
+
+    font-size:30px;
+
+    color:#0F172A;
+}
+
+.students-card{
+    border-left:6px solid #2563EB;
+}
+
+.average-card{
+    border-left:6px solid #8B5CF6;
+}
+
+.highest-card{
+    border-left:6px solid #10B981;
+}
+
+.lowest-card{
+    border-left:6px solid #F97316;
+}
+
+.pass-card{
+    border-left:6px solid #059669;
+}
+
+/* =========================
+   LEADERBOARD
+========================= */
+
+.leaderboard{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:15px;
+}
+
+.leaderboard-item{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:20px;
+
+    background:white;
+
+    border-radius:18px;
+
+    box-shadow:
+    0 6px 18px rgba(0,0,0,.05);
+
+    transition:.3s;
+}
+
+.leaderboard-item:hover{
+
+    transform:translateY(-4px);
+}
+
+.leaderboard-item:first-child{
+
+    background:
+    linear-gradient(
+    135deg,
+    #FFF8E1,
+    #FFFFFF
+    );
+
+    border:2px solid #FBBF24;
+}
+
+.leaderboard-item:nth-child(2){
+
+    border-left:6px solid #94A3B8;
+}
+
+.leaderboard-item:nth-child(3){
+
+    border-left:6px solid #D97706;
+}
+
+.leaderboard-rank{
+
+    width:60px;
+
+    text-align:center;
+
+    font-size:32px;
+}
+
+.leaderboard-info{
+
+    flex:1;
+
+    margin-left:20px;
+}
+
+.student-name{
+
+    font-size:18px;
+
+    font-weight:600;
+
+    color:#0F172A;
+}
+
+.student-label{
+
+    color:#64748B;
+
+    font-size:13px;
+
+    margin-top:4px;
+}
+
+.leaderboard-score{
+
+    background:#EFF6FF;
+
+    color:#2563EB;
+
+    padding:10px 18px;
+
+    border-radius:999px;
+
+    font-weight:700;
+
+    min-width:90px;
+
+    text-align:center;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+    .analytics-grid{
+        grid-template-columns:1fr;
+    }
+
+    .leaderboard-item{
+
+        flex-direction:column;
+
+        text-align:center;
+
+        gap:12px;
+    }
+
+    .leaderboard-info{
+        margin-left:0;
+    }
+}
+
+</style>
+
+<div class="content-card analytics-card">
+
+    <div class="section-header">
+
+        <h2>📊 Analytics Dashboard</h2>
+
+        <p>
+            Department performance insights and top student rankings
+        </p>
+
+    </div>
+
+    <form
+    th:action="@{/staff/analytics}"
+    method="get"
+    class="analytics-filter">
+
+        <select name="departmentId">
+
+            <option value="0">
+                Select Department
+            </option>
+
+            <option
+            th:each="dep : ${departments}"
+            th:value="${dep.id}"
+            th:text="${dep.departmentName}"
+            th:selected="${dep.id == departmentId}">
+            </option>
+
+        </select>
+
+        <button type="submit">
+            Generate Report
+        </button>
+
+    </form>
+
+    <div th:if="${summary != null}">
+
+        <div class="analytics-divider"></div>
+
+        <h3 class="section-title">
+            📈 Performance Summary
+        </h3>
+
+        <div class="analytics-grid">
+
+            <div class="analytics-box students-card">
+
+                <span>👨‍🎓 Total Students</span>
+
+                <h3
+                th:text="${summary.totalStudents}">
+                    0
+                </h3>
+
+            </div>
+
+            <div class="analytics-box average-card">
+
+                <span>📚 Average Marks</span>
+
+                <h3
+                th:text="${#numbers.formatDecimal(summary.averageMarks,1,2)}">
+                    0
+                </h3>
+
+            </div>
+
+            <div class="analytics-box highest-card">
+
+                <span>🏆 Highest Mark</span>
+
+                <h3
+                th:text="${summary.highestMark}">
+                    0
+                </h3>
+
+            </div>
+
+            <div class="analytics-box lowest-card">
+
+                <span>📉 Lowest Mark</span>
+
+                <h3
+                th:text="${summary.lowestMark}">
+                    0
+                </h3>
+
+            </div>
+
+            <div class="analytics-box pass-card">
+
+                <span>✅ Pass Percentage</span>
+
+                <h3
+                th:text="${#numbers.formatDecimal(summary.passPercentage,1,2)+'%'}">
+                    0%
+                </h3>
+
+            </div>
+
+        </div>
+
+        <div class="analytics-divider"></div>
+
+        <h3 class="section-title">
+            🏆 Top 5 Students
+        </h3>
+
+        <div class="leaderboard">
+
+            <div
+            class="leaderboard-item"
+            th:each="student, stat : ${topStudents}">
+
+                <div class="leaderboard-rank">
+
+                    <span
+                    th:if="${stat.count == 1}">
+                        🥇
+                    </span>
+
+                    <span
+                    th:if="${stat.count == 2}">
+                        🥈
+                    </span>
+
+                    <span
+                    th:if="${stat.count == 3}">
+                        🥉
+                    </span>
+
+                    <span
+                    th:if="${stat.count > 3}"
+                    th:text="${stat.count}">
+                        4
+                    </span>
+
+                </div>
+
+                <div class="leaderboard-info">
+
+                    <div
+                    class="student-name"
+                    th:text="${student.studentName}">
+                        Student Name
+                    </div>
+
+                    <div class="student-label">
+
+                        Academic Performance
+
+                    </div>
+
+                </div>
+
+                <div
+                class="leaderboard-score"
+                th:text="${#numbers.formatDecimal(student.average,1,2)}">
+
+                    95.00
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+

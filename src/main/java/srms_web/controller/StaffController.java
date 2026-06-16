@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+import jakarta.servlet.http.HttpSession;
 import srms_web.staff.StaffService;
+import srms_web.model.AnalyticsSummary;
+import srms_web.model.UserSession;
 
 @Controller
 @RequestMapping("/staff")
@@ -228,6 +230,85 @@ return "redirect:/staff/marks?departmentId="
 + subjectId;
 
 }
+
+    // =========================
+    // ANALYTICS
+    // =========================
+
+    @GetMapping("/analytics")
+    public String analyticsPage(
+            @RequestParam(
+                    defaultValue = "0"
+            )
+            int departmentId,
+
+            Model model,
+
+            HttpSession session
+    ) 
+
+    {
+
+        UserSession user =
+                (UserSession)
+                session.getAttribute("user");
+
+        if(user == null) {
+
+            return "redirect:/login";
+        }
+
+        model.addAttribute(
+                "activePage",
+                "analytics"
+        );
+
+        model.addAttribute(
+                "departments",
+                staffService.getDepartments()
+        );
+
+        model.addAttribute(
+                "departmentId",
+                departmentId
+        );
+
+      if(departmentId > 0) {
+
+    AnalyticsSummary summary =
+            staffService.getAnalyticsSummary(
+                    departmentId
+            );
+
+    System.out.println(
+            "Total Students = "
+            + summary.getTotalStudents()
+    );
+
+    model.addAttribute(
+            "summary",
+            summary
+    );
+
+    model.addAttribute(
+            "topStudents",
+            staffService.getTopStudentsByDepartment(
+                    departmentId
+            )
+    );
+}
+
+        model.addAttribute(
+                "content",
+                "fragments/staff-analytics-content"
+        );
+        System.out.println(
+        "Department = " + departmentId
+    );
+    System.out.println("Analytics Page Loaded");
+
+        return "staff-dashboard";
+    }
 
 
 }

@@ -1,6 +1,8 @@
 package srms_web.staff;
 
 import srms_web.database.DBConnection;
+import srms_web.model.AnalyticsData;
+import srms_web.model.AnalyticsSummary;
 import srms_web.model.Department;
 import srms_web.model.StudentInfo;
 import srms_web.model.StudentMark;
@@ -15,6 +17,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import srms_web.model.Subject;
+
+
 
 
 @Service
@@ -622,5 +626,168 @@ e.printStackTrace();
 }
 
 }
+
+//=========================
+//GET ANALYTICS SUMMARY
+//=========================
+public AnalyticsSummary getAnalyticsSummary(
+        int departmentId
+) {
+
+    AnalyticsSummary summary =
+            new AnalyticsSummary();
+
+            
+
+    try {
+
+        Connection con =
+                DBConnection.getConnection();
+
+        String sql =
+                """
+                SELECT
+                    COUNT(DISTINCT s.student_id) total_students,
+                    AVG(m.marks) average_marks,
+                    MAX(m.marks) highest_mark,
+                    MIN(m.marks) lowest_mark,
+
+                    (
+                        SUM(
+                            CASE
+                                WHEN m.marks >= 50
+                                THEN 1
+                                ELSE 0
+                            END
+                        ) * 100.0
+                    ) / COUNT(*) pass_percentage
+
+                FROM students s
+
+                JOIN marks m
+                ON s.student_id = m.student_id
+
+                WHERE s.department_id = ?
+                """;
+
+        PreparedStatement pst =
+                con.prepareStatement(sql);
+
+        pst.setInt(1, departmentId);
+
+        ResultSet rs =
+                pst.executeQuery();
+
+        if(rs.next()) {
+
+            summary.setTotalStudents(
+                    rs.getInt("total_students")
+            );
+
+            summary.setAverageMarks(
+                    rs.getDouble("average_marks")
+            );
+
+            summary.setHighestMark(
+                    rs.getInt("highest_mark")
+            );
+
+            summary.setLowestMark(
+                    rs.getInt("lowest_mark")
+            );
+
+            summary.setPassPercentage(
+                    rs.getDouble("pass_percentage")
+            );
+        }
+
+    }
+    catch(Exception e) {
+
+        e.printStackTrace();
+
+    }
+
+    return summary;
+
+  
+}
+
+//=========================
+//TOP STUDENT BY DEPARTMENT
+//=========================
+public List<AnalyticsData>
+getTopStudentsByDepartment(
+        int departmentId
+) {
+
+    List<AnalyticsData> list =
+            new ArrayList<>();
+
+    try {
+
+        Connection con =
+                DBConnection.getConnection();
+
+        String sql =
+                """
+                SELECT
+                    s.name,
+                    AVG(m.marks) average
+
+                FROM students s
+
+                JOIN marks m
+                ON s.student_id = m.student_id
+
+                WHERE s.department_id = ?
+
+                GROUP BY
+                    s.student_id,
+                    s.name
+
+                ORDER BY average DESC
+
+                LIMIT 5
+                """;
+
+        PreparedStatement pst =
+                con.prepareStatement(sql);
+
+        pst.setInt(1, departmentId);
+
+        ResultSet rs =
+                pst.executeQuery();
+
+        while(rs.next()) {
+
+            AnalyticsData data =
+                    new AnalyticsData();
+
+            data.setStudentName(
+                    rs.getString("name")
+            );
+
+            data.setAverage(
+                    rs.getDouble("average")
+            );
+
+            list.add(data);
+        }
+
+    }
+    catch(Exception e) {
+
+        e.printStackTrace();
+
+    }
+
+    return list;
+}
+
+
+
+
+
 
 }
