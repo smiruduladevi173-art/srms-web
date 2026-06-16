@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>SRMS Staff Panel</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:"Segoe UI",sans-serif;
+}
+
+body{
+background:#F8FAFC;
+overflow:hidden;
+}
+
+.container{
+display:flex;
+height:100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar{
+
+width:280px;
+
+background:linear-gradient(
+180deg,
+#059669 0%,
+#047857 100%
+);
+
+padding:25px;
+
+display:flex;
+
+flex-direction:column;
+
+box-shadow:
+4px 0 20px rgba(0,0,0,.08);
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo{
+
+text-align:center;
+
+margin-bottom:40px;
+}
+
+.logo h2{
+
+font-size:28px;
+
+font-weight:700;
+
+color:white;
+}
+
+.logo p{
+
+color:rgba(255,255,255,.8);
+
+font-size:13px;
+
+margin-top:5px;
+}
+
+/* =========================
+   MENU
+========================= */
+
+.menu{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+flex:1;
+}
+
+.sidebar a{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+padding:15px 18px;
+
+border-radius:14px;
+
+text-decoration:none;
+
+font-size:15px;
+
+font-weight:600;
+
+color:rgba(255,255,255,.88);
+
+transition:all .25s ease;
+}
+
+.sidebar a:hover{
+
+background:
+rgba(255,255,255,.12);
+
+color:white;
+
+transform:
+translateX(4px);
+}
+
+.sidebar a.active{
+
+background:white;
+
+color:#059669;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,.12);
+
+position:relative;
+}
+
+.sidebar a.active::before{
+
+content:"";
+
+position:absolute;
+
+left:-25px;
+
+top:10px;
+
+bottom:10px;
+
+width:5px;
+
+background:white;
+
+border-radius:10px;
+}
+
+/* =========================
+   LOGOUT
+========================= */
+
+.logout{
+
+margin-top:auto;
+
+background:#DC2626;
+
+color:white !important;
+}
+
+.logout:hover{
+
+background:#B91C1C;
+
+transform:none;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content{
+
+flex:1;
+
+padding:30px;
+
+overflow:auto;
+
+background:#F8FAFC;
+}
+
+.card{
+
+background:white;
+
+min-height:100%;
+
+padding:35px;
+
+border-radius:24px;
+
+border:1px solid #E2E8F0;
+
+box-shadow:
+0 12px 35px rgba(15,23,42,.06);
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+::-webkit-scrollbar{
+width:8px;
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#CBD5E1;
+
+border-radius:20px;
+}
+
+::-webkit-scrollbar-track{
+background:transparent;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<div class="logo">
+
+<h2>👨‍🏫 STAFF</h2>
+
+<p>STAFF PANEL</p>
+
+</div>
+
+<div class="menu">
+
+<a
+
+th:href="@{/staff/students}"
+
+th:classappend="${activePage == 'students'} ? 'active'">
+
+👨‍🎓 Students
+
+</a>
+
+<a
+
+th:href="@{/staff/marks}"
+
+th:classappend="${activePage == 'marks'} ? 'active'">
+
+📚 Marks
+
+</a>
+
+<a
+
+th:href="@{/staff/analytics}"
+
+th:classappend="${activePage == 'analytics'} ? 'active'">
+
+📊 Analytics
+
+</a>
+
+</div>
+
+<a
+
+class="logout"
+
+th:href="@{/logout}">
+
+🚪 Logout
+
+</a>
+
+</div>
+
+<!-- CONTENT -->
+
+<div class="content">
+
+<div class="card">
+
+<div
+
+th:if="${content != null}"
+
+<div class="content-area">
+
+<div th:replace="~{${content}}"></div>
+</div>
+</div>
+
+<div th:if="${content == null}">
+
+<h2>Staff Panel</h2>
+
+<p>Select an option from the sidebar.</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+
+</html>

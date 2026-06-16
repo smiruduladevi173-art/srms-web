@@ -1,24 +1,35 @@
 package srms_web.controller;
 
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import srms_web.auth.Authentication;
+
 import org.springframework.ui.Model;
+
+import srms_web.auth.Authentication;
 
 @Controller
 public class LoginController {
 
-        @GetMapping("/")
-public String loginPage() {
-    return "login";
-}
+    // =========================
+    // LOGIN PAGE
+    // =========================
 
-@GetMapping("/login")
-public String loginPageAgain() {
-    return "login";
-}
+    @GetMapping("/")
+    public String loginPage() {
+
+        return "login";
+
+    }
+
+    @GetMapping("/login")
+    public String loginPageAgain() {
+
+        return "login";
+
+    }
 
   @PostMapping("/login")
 public String login(
@@ -33,36 +44,33 @@ public String login(
 
 ) {
 
-    System.out.println(
-            "LOGIN BUTTON CLICKED"
-    );
-
-    Object studentId =
-
-            Authentication.login(
-                    username,
-                    password
-            );
-
-    if (studentId != null) {
-
-        session.setAttribute(
-                "studentId",
-                studentId
+        System.out.println(
+                "LOGIN BUTTON CLICKED"
         );
 
+        Object studentId =
+
+                Authentication.login(
+                        username,
+                        password
+                );
+
+        if (studentId != null) {
+
+            session.setAttribute(
+                    "studentId",
+                    studentId
+            );
+
+            return
+                    "redirect:/student/dashboard";
+
+        }
+
         return
-                "redirect:/student/dashboard";
+                "redirect:/";
 
     }
-
-    model.addAttribute(
-            "error",
-            "Your username or password is incorrect"
-    );
-
-    return "login";
-}
 
     // =========================
     // LOGOUT
@@ -78,7 +86,6 @@ public String login(
         session.invalidate();
 
         return "redirect:/";
-
     }
 
 }
