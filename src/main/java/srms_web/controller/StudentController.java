@@ -8,9 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import srms_web.model.Mark;
+import srms_web.database.DBConnection;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
@@ -190,13 +190,10 @@ private void loadPerformanceData(
 
 ) {
 
-    String db =
-            "jdbc:sqlite:database/srms.db";
-
     try (
 
             Connection conn =
-                    DriverManager.getConnection(db)
+                    DBConnection.getConnection()
 
     ) {
 
@@ -354,9 +351,6 @@ WHERE m.student_id = ?
 
     ) {
 
-        String db =
-                "jdbc:sqlite:database/srms.db";
-
         System.out.println(
                 "\nConnecting DB..."
         );
@@ -364,7 +358,7 @@ WHERE m.student_id = ?
         try (
 
                 Connection conn =
-                        DriverManager.getConnection(db)
+                        DBConnection.getConnection()
 
         ) {
 
@@ -504,13 +498,10 @@ private Integer getStudentId(
         Object userId
 ) {
 
-    String db =
-            "jdbc:sqlite:database/srms.db";
-
     try (
 
             Connection conn =
-                    DriverManager.getConnection(db)
+                    DBConnection.getConnection()
 
     ) {
 
@@ -568,13 +559,10 @@ private void loadMarksData(
     List<Mark> marksList =
             new ArrayList<>();
 
-    String db =
-            "jdbc:sqlite:database/srms.db";
-
     try (
 
             Connection conn =
-                    DriverManager.getConnection(db)
+                    DBConnection.getConnection()
 
     ) {
 

@@ -1,11 +1,11 @@
 package srms_web.auth;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import srms_web.model.UserSession;
+import srms_web.database.DBConnection;
 
 public class Authentication {
 
@@ -17,13 +17,10 @@ public class Authentication {
 
     ) {
 
-        String db =
-                "jdbc:sqlite:database/srms.db";
-
         try (
 
                 Connection conn =
-                        DriverManager.getConnection(db)
+                        DBConnection.getConnection()
 
         ) {
 
