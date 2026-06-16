@@ -207,13 +207,37 @@ transform:translateY(-1px);
 
 margin-top:15px;
 
-text-align:center;
+padding:12px;
+
+background:#FEF2F2;
+
+border:1px solid #FECACA;
 
 color:#DC2626;
+
+border-radius:10px;
 
 font-size:14px;
 
 font-weight:600;
+
+text-align:center;
+
+animation:fadeIn .3s ease;
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(-5px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
 }
 
 .footer{
@@ -286,32 +310,9 @@ class="error"
 th:if="${error}"
 th:text="${error}">
 </div>
-
 </form>
 
-
-
 </div>
-
-<script>
-
-setTimeout(() => {
-
-    const errorBox =
-        document.getElementById(
-            "errorBox"
-        );
-
-    if(errorBox){
-
-        errorBox.style.display =
-            "none";
-
-    }
-
-}, 5000);
-
-</script>
 
 <script>
 

@@ -34,8 +34,8 @@ public class StudentController {
         }
 
     @GetMapping({
-            "/student/dashboard",
-            "/student/profile"
+            "/student/student-dashboard",
+            "/student/profile-profile"
     })
     public String dashboard(
 
@@ -59,17 +59,17 @@ public class StudentController {
 
         System.out.println("\n========== DASHBOARD ==========");
 
-        Object studentId =
-                session.getAttribute(
-                        "studentId"
-                );
-
-        System.out.println(
-                "Session Student ID = "
-                + studentId
+       Object userId =
+        session.getAttribute(
+                "userId"
         );
 
-        if (studentId == null) {
+        System.out.println(
+                "Session User ID = "
+                + userId
+        );
+
+        if (userId == null) {
 
             System.out.println(
                     "ERROR → Session empty"
@@ -78,12 +78,17 @@ public class StudentController {
             return "redirect:/";
         }
 
-        boolean loaded =
-                loadStudentData(
-                        studentId,
-                        model
-                );
-                
+Integer studentId =
+        getStudentId(
+                userId
+        );
+
+boolean loaded =
+        loadStudentData(
+                userId,
+                model
+        );
+
 loadMarksData(
         studentId,
         model
@@ -92,8 +97,7 @@ loadMarksData(
 loadPerformanceData(
         studentId,
         model
-); 
-
+);
 
 
         if (!loaded) {
@@ -104,7 +108,7 @@ loadPerformanceData(
 
             model.addAttribute(
                     "studentId",
-                    studentId
+                    userId
             );
 
             model.addAttribute(
@@ -160,7 +164,9 @@ loadPerformanceData(
 );
 
 
-
+System.out.println(
+    "View = " + resolveView(view)
+);
         System.out.println(
                 "Dashboard rendered"
         );
@@ -169,7 +175,9 @@ loadPerformanceData(
                 "DASHBOARD HIT"
         );
 
-        return "dashboard";
+        return "student-dashboard";
+
+        
 
     }
 
@@ -366,6 +374,7 @@ WHERE m.student_id = ?
 
             String sql = """
 
+
 SELECT
 s.student_id,
 s.roll_number,
@@ -379,7 +388,7 @@ FROM students s
 LEFT JOIN departments d
 ON s.department_id = d.id
 
-WHERE s.student_id = ?
+WHERE s.user_id = ?
 
 """;
 
@@ -490,6 +499,59 @@ WHERE s.student_id = ?
     }
 
 
+
+private Integer getStudentId(
+        Object userId
+) {
+
+    String db =
+            "jdbc:sqlite:database/srms.db";
+
+    try (
+
+            Connection conn =
+                    DriverManager.getConnection(db)
+
+    ) {
+
+        String sql = """
+
+SELECT student_id
+FROM students
+WHERE user_id = ?
+
+""";
+
+        PreparedStatement ps =
+                conn.prepareStatement(sql);
+
+        ps.setObject(
+                1,
+                userId
+        );
+
+        ResultSet rs =
+                ps.executeQuery();
+
+        if (rs.next()) {
+
+            return rs.getInt(
+                    "student_id"
+            );
+
+        }
+
+    }
+
+    catch (Exception e) {
+
+        e.printStackTrace();
+
+    }
+
+    return null;
+
+}
 
 
 private void loadMarksData(
@@ -647,4 +709,3 @@ for(Mark mark : marksList)
     }
 
 }
-

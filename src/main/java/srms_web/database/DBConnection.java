@@ -13,7 +13,7 @@ new java.io.File("srms.db").getAbsolutePath()
 try{
 
 return DriverManager.getConnection(
-"jdbc:sqlite:srms.db"
+"jdbc:sqlite:C:\\Users\\admin\\Downloads\\srms-web\\database\\srms.db"
 );
 
 
