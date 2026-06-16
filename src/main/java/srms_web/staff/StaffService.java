@@ -1,7 +1,9 @@
 package srms_web.staff;
 
 import srms_web.database.DBConnection;
+import srms_web.model.Department;
 import srms_web.model.StudentInfo;
+import srms_web.model.StudentMark;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import srms_web.model.Subject;
+
 
 @Service
 public class StaffService {
@@ -223,4 +228,399 @@ e.printStackTrace();
 }
 
 }
+
+/*================================
+STUDENT MARKS
+================================== */
+public List<StudentMark>
+loadMarks(
+int departmentId,
+int subjectId
+){
+
+List<StudentMark> list =
+new ArrayList<>();
+
+try{
+
+Connection con =
+DBConnection.getConnection();
+
+String sql =
+"""
+SELECT
+s.student_id,
+s.roll_number,
+s.name,
+m.marks
+
+FROM students s
+
+LEFT JOIN marks m
+ON s.student_id = m.student_id
+AND m.subject_id = ?
+
+WHERE s.department_id = ?
+
+ORDER BY s.roll_number
+""";
+
+PreparedStatement pst =
+con.prepareStatement(sql);
+
+pst.setInt(
+1,
+subjectId
+);
+
+pst.setInt(
+2,
+departmentId
+);
+
+ResultSet rs =
+pst.executeQuery();
+
+while(rs.next()){
+
+StudentMark row =
+new StudentMark();
+
+row.setStudentId(
+rs.getInt(
+"student_id"
+)
+);
+
+row.setRollNumber(
+rs.getString(
+"roll_number"
+)
+);
+
+row.setName(
+rs.getString(
+"name"
+)
+);
+
+row.setMarks(
+(Integer)rs.getObject(
+"marks"
+)
+);
+
+list.add(row);
+
+}
+
+System.out.println(
+"Students Loaded = "
++ list.size()
+);
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return list;
+
+}
+
+/*================================
+subject
+=================================== */
+public List<Subject>
+getSubjects(
+
+int departmentId
+
+){
+
+List<Subject>
+list=
+new ArrayList<>();
+
+try{
+
+/* DEBUG */
+
+System.out.println(
+"Department = "
++
+departmentId
+);
+
+Connection con=
+DBConnection
+.getConnection();
+
+String sql=
+"""
+SELECT
+
+id,
+
+subject_name
+
+FROM subjects
+
+WHERE department_id=?
+""";
+
+PreparedStatement pst=
+con.prepareStatement(
+sql
+);
+
+pst.setInt(
+1,
+departmentId
+);
+
+ResultSet rs=
+pst.executeQuery();
+
+while(
+
+rs.next()
+
+){
+
+/* DEBUG */
+
+System.out.println(
+
+"Subject = "
+
++
+
+rs.getString(
+"subject_name"
+)
+
+);
+
+Subject s=
+new Subject();
+
+s.setId(
+
+rs.getInt(
+"id"
+)
+
+);
+
+s.setSubjectName(
+
+rs.getString(
+"subject_name"
+)
+
+);
+
+list.add(
+s
+);
+
+}
+
+System.out.println(
+
+"Subjects Loaded = "
+
++
+
+list.size()
+
+);
+
+}
+
+catch(
+
+Exception e
+
+){
+
+e.printStackTrace();
+
+}
+
+
+return list;
+
+}
+
+//=========================
+// DEPARTMENTS
+//=========================
+public List<Department> getDepartments(){
+
+    List<Department> list =
+    new ArrayList<>();
+
+    try{
+
+        Connection con =
+        DBConnection.getConnection();
+
+        String sql =
+        """
+        SELECT
+        id,
+        department_name
+        FROM departments
+        """;
+
+        PreparedStatement pst =
+        con.prepareStatement(sql);
+
+        ResultSet rs =
+        pst.executeQuery();
+
+        while(rs.next()){
+
+            Department d =
+            new Department();
+
+            d.setId(
+                rs.getInt("id")
+            );
+
+            d.setDepartmentName(
+                rs.getString(
+                    "department_name"
+                )
+            );
+
+            list.add(d);
+
+        }
+
+    }catch(Exception e){
+
+        e.printStackTrace();
+
+    }
+
+    return list;
+
+}
+//=========================
+// SAVE MARKS
+//=========================
+public void saveMark(
+int studentId,
+int subjectId,
+int marks
+){
+
+try(
+
+Connection con =
+DBConnection.getConnection()
+
+){
+
+String checkSql =
+"""
+SELECT mark_id
+FROM marks
+WHERE student_id=?
+AND subject_id=?
+""";
+
+try(
+
+PreparedStatement check =
+con.prepareStatement(checkSql)
+
+){
+
+check.setInt(1,studentId);
+check.setInt(2,subjectId);
+
+try(
+
+ResultSet rs =
+check.executeQuery()
+
+){
+
+if(rs.next()){
+
+String updateSql =
+"""
+UPDATE marks
+SET marks=?
+WHERE student_id=?
+AND subject_id=?
+""";
+
+try(
+
+PreparedStatement pst =
+con.prepareStatement(updateSql)
+
+){
+
+pst.setInt(1,marks);
+pst.setInt(2,studentId);
+pst.setInt(3,subjectId);
+
+pst.executeUpdate();
+
+}
+
+}else{
+
+String insertSql =
+"""
+INSERT INTO marks(
+student_id,
+subject_id,
+marks
+)
+VALUES(
+?,
+?,
+?
+)
+""";
+
+try(
+
+PreparedStatement pst =
+con.prepareStatement(insertSql)
+
+){
+
+pst.setInt(1,studentId);
+pst.setInt(2,subjectId);
+pst.setInt(3,marks);
+
+pst.executeUpdate();
+
+}
+
+}
+
+}
+
+}
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+}
+
 }

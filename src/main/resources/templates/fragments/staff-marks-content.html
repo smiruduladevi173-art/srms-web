@@ -1,1 +1,271 @@
-    <h2>Staff Marks Content Panel</h2>
+<form th:action="@{/staff/marks}" method="get">
+
+    <div class="filter-row">
+
+        <select
+                name="departmentId"
+                onchange="this.form.submit()">
+
+            <option value="0">
+                Select Department
+            </option>
+
+            <option
+                    th:each="dep : ${departments}"
+                    th:value="${dep.id}"
+                    th:text="${dep.departmentName}"
+                    th:selected="${dep.id == departmentId}">
+            </option>
+
+        </select>
+
+        <select
+                name="subjectId"
+                onchange="this.form.submit()">
+
+            <option value="0">
+                Select Subject
+            </option>
+
+            <option
+                    th:each="sub : ${subjects}"
+                    th:value="${sub.id}"
+                    th:text="${sub.subjectName}"
+                    th:selected="${sub.id == subjectId}">
+            </option>
+
+        </select>
+
+    </div>
+
+</form>
+
+
+<div class="content-card">
+
+    <h2 class="page-title">
+        Marks Management
+    </h2>
+
+    <form
+            th:action="@{/staff/marks/save}"
+            method="post">
+
+        <input
+                type="hidden"
+                name="departmentId"
+                th:value="${departmentId}">
+
+        <input
+                type="hidden"
+                name="subjectId"
+                th:value="${subjectId}">
+
+        <table class="marks-table">
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    Roll No
+                </th>
+
+                <th>
+                    Student Name
+                </th>
+
+                <th>
+                    Marks
+                </th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr th:if="${#lists.isEmpty(rows)}">
+
+                <td colspan="3"
+                    style="text-align:center;padding:30px;color:#64748B;">
+
+                    Select Department and Subject
+
+                </td>
+
+            </tr>
+
+            <tr th:each="row : ${rows}">
+
+                <input
+                        type="hidden"
+                        name="studentId"
+                        th:value="${row.studentId}">
+
+                <td>
+
+                    <span
+                            th:text="${row.rollNumber}">
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <span
+                            th:text="${row.name}">
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <input
+                            type="number"
+                            name="marks"
+                            min="0"
+                            max="100"
+                            class="mark-input"
+                            th:value="${row.marks}">
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+        <div class="button-row">
+
+            <button
+                    type="submit"
+                    class="save-btn">
+
+                Save Marks
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<style>
+
+.filter-row{
+
+    display:flex;
+    gap:16px;
+    align-items:center;
+    margin-bottom:24px;
+    flex-wrap:wrap;
+
+}
+
+.filter-row select{
+
+    padding:12px;
+    min-width:240px;
+    border:1px solid #D6DCE5;
+    border-radius:10px;
+    font-size:14px;
+    background:white;
+
+}
+
+.content-card{
+
+    background:white;
+    padding:24px;
+    border-radius:18px;
+
+    box-shadow:
+            0 4px 20px
+            rgba(
+                    0,
+                    0,
+                    0,
+                    0.06
+            );
+
+    overflow:auto;
+
+}
+
+.page-title{
+
+    font-size:28px;
+    font-weight:700;
+    margin-bottom:24px;
+    color:#0F172A;
+
+}
+
+.marks-table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+.marks-table th{
+
+    padding:16px;
+    text-align:left;
+    background:#F8FAFC;
+    border-bottom:1px solid #E2E8F0;
+
+}
+
+.marks-table td{
+
+    padding:16px;
+    border-bottom:1px solid #EDF2F7;
+
+}
+
+.marks-table tr:hover{
+
+    background:#FAFBFD;
+
+}
+
+.mark-input{
+
+    width:120px;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #D6DCE5;
+
+}
+
+.button-row{
+
+    margin-top:24px;
+    display:flex;
+    justify-content:flex-end;
+
+}
+
+.save-btn{
+
+    padding:12px 24px;
+    border:none;
+    border-radius:10px;
+    background:#2563EB;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+
+}
+
+.save-btn:hover{
+
+    opacity:.92;
+
+}
+
+</style>

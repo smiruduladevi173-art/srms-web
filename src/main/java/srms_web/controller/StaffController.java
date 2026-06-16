@@ -116,64 +116,118 @@ public String saveStudents(
 // =========================
 // MARKS
 // =========================
-
 @GetMapping("/marks")
 public String marks(
 
-        Model model
+@RequestParam(defaultValue="0")
+int departmentId,
 
-) {
+@RequestParam(defaultValue="0")
+int subjectId,
+
+Model model
+
+){
 
     model.addAttribute(
-
-            "activePage",
-
-            "marks"
-
+        "activePage",
+        "marks"
     );
 
     model.addAttribute(
-
-            "content",
-
-            "fragments/staff-marks-content"
-
+        "content",
+        "fragments/staff-marks-content"
     );
+
+    model.addAttribute(
+        "departmentId",
+        departmentId
+    );
+
+    model.addAttribute(
+        "subjectId",
+        subjectId
+    );
+
+    model.addAttribute(
+        "departments",
+        staffService.getDepartments()
+    );
+
+    model.addAttribute(
+        "subjects",
+        staffService.getSubjects(
+            departmentId
+        )
+    );
+
+    if(subjectId > 0){
+
+        var rows =
+        staffService.loadMarks(
+            departmentId,
+            subjectId
+        );
+
+        System.out.println(
+            "Rows Loaded = "
+            + rows.size()
+        );
+
+        model.addAttribute(
+            "rows",
+            rows
+        );
+
+    }else{
+
+        model.addAttribute(
+            "rows",
+            java.util.Collections.emptyList()
+        );
+
+    }
 
     return "staff-dashboard";
 
 }
 
-// =========================
-// ANALYTICS
-// =========================
+//=========================
+// SAVE MARKS
+//=========================
+@PostMapping("/marks/save")
+public String saveMarks(
 
-@GetMapping("/analytics")
-public String analytics(
+@RequestParam int subjectId,
 
-        Model model
+@RequestParam int departmentId,
 
-)
- {
+@RequestParam List<Integer> studentId,
 
-    model.addAttribute(
+@RequestParam List<Integer> marks
 
-            "activePage",
+){
 
-            "analytics"
+for(int i=0;i<studentId.size();i++){
 
-    );
+staffService.saveMark(
 
-    model.addAttribute(
+studentId.get(i),
 
-            "content",
+subjectId,
 
-            "fragments/staff-analytics-content"
+marks.get(i)
 
-    );
-
-    return "staff-dashboard";
-
+);
 
 }
+
+return "redirect:/staff/marks?departmentId="
++ departmentId
++ "&subjectId="
++ subjectId;
+
+}
+
+
 }
