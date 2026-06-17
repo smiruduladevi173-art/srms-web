@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -92,4 +93,261 @@ public String deleteDepartment(
     "redirect:/admin?view=departments";
 }
 
+
+
+//==============================================================================//
+//=====================
+// SUBJECT PAGE
+//=====================
+
+@GetMapping(
+"/admin/subjects"
+)
+
+public String subjects(
+
+@RequestParam(
+required=false
+)
+Integer departmentId,
+
+@RequestParam(
+required=false
+)
+Integer semester,
+
+Model model
+
+){
+
+model.addAttribute(
+"activePage",
+"subjects"
+);
+
+model.addAttribute(
+"departments",
+adminService
+.getAllDepartments()
+);
+
+
+if(
+
+departmentId!=null
+
+&&
+
+semester!=null
+
+){
+
+model.addAttribute(
+
+"subjects",
+
+adminService
+.getSubjects(
+departmentId,
+semester
+)
+
+);
+
+}
+
+
+model.addAttribute(
+
+"view",
+
+"fragments/admin-subjects-content"
+
+);
+
+
+return
+"admin-dashboard";
+
+}
+
+
+
+//=====================
+// FILTER SUBJECTS
+//=====================
+
+@PostMapping(
+"/admin/subjects/filter"
+)
+
+public String filterSubjects(
+
+@RequestParam
+int departmentId,
+
+@RequestParam
+int semester,
+
+RedirectAttributes redirect
+
+){
+
+redirect
+.addAttribute(
+"departmentId",
+departmentId
+);
+
+redirect
+.addAttribute(
+"semester",
+semester
+);
+
+return
+"redirect:/admin/subjects";
+
+}
+
+
+
+//=====================
+// ADD SUBJECT
+//=====================
+
+@PostMapping(
+"/admin/subjects/add"
+)
+
+public String addSubject(
+
+@RequestParam
+int departmentId,
+
+@RequestParam
+int semester,
+
+@RequestParam
+String subjectName,
+
+RedirectAttributes redirect
+
+){
+
+adminService
+.addSubject(
+
+departmentId,
+
+semester,
+
+subjectName
+
+);
+
+redirect
+.addFlashAttribute(
+
+"message",
+
+"Subject Added Successfully"
+
+);
+
+redirect
+.addAttribute(
+"departmentId",
+departmentId
+);
+
+redirect
+.addAttribute(
+"semester",
+semester
+);
+
+return
+"redirect:/admin/subjects";
+
+}
+
+
+
+//=====================
+// DELETE SUBJECT
+//=====================
+
+@PostMapping(
+"/admin/subjects/delete"
+)
+
+public String deleteSubject(
+
+@RequestParam
+int subjectId,
+
+@RequestParam
+int departmentId,
+
+@RequestParam
+int semester,
+
+RedirectAttributes redirect
+
+){
+
+boolean deleted=
+
+adminService
+.deleteSubject(
+subjectId
+);
+
+
+if(
+deleted
+){
+
+redirect
+.addFlashAttribute(
+
+"message",
+
+"Subject Deleted Successfully"
+
+);
+
+}
+
+else{
+
+redirect
+.addFlashAttribute(
+
+"error",
+
+"Delete Failed"
+
+);
+
+}
+
+
+redirect
+.addAttribute(
+"departmentId",
+departmentId
+);
+
+redirect
+.addAttribute(
+"semester",
+semester
+);
+
+return
+"redirect:/admin/subjects";
+
+}
 }   

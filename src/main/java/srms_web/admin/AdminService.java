@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import srms_web.database.DBConnection;
 import srms_web.model.Department;
+import srms_web.model.Subject;
 
 @Service
 public class AdminService {
@@ -248,5 +249,239 @@ e.printStackTrace();
 }
 
 }
+//=====================
+// GET SUBJECTS
+//=====================
 
+public List<Subject>
+getSubjects(
+int departmentId,
+int semester
+){
+
+List<Subject> list=
+new ArrayList<>();
+
+String sql=
+"""
+SELECT
+s.id,
+s.subject_name
+
+FROM subjects s
+
+WHERE
+department_id=?
+
+AND semester=?
+
+ORDER BY
+subject_name
+""";
+
+
+try(
+
+Connection con=
+DBConnection.getConnection();
+
+PreparedStatement ps=
+con.prepareStatement(sql)
+
+){
+
+ps.setInt(
+1,
+departmentId
+);
+
+ps.setInt(
+2,
+semester
+);
+
+try(
+
+ResultSet rs=
+ps.executeQuery()
+
+){
+
+while(rs.next()){
+
+Subject subject=
+new Subject();
+
+subject.setId(
+rs.getInt(
+"id"
+)
+);
+
+subject.setSubjectName(
+rs.getString(
+"subject_name"
+)
+);
+
+list.add(
+subject
+);
+
+}
+
+}
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return list;
+
+}
+
+
+
+//=====================
+// ADD SUBJECT
+//=====================
+
+public void addSubject(
+
+int departmentId,
+
+int semester,
+
+String subjectName
+
+){
+
+String sql=
+"""
+INSERT INTO subjects(
+
+department_id,
+semester,
+subject_name
+
+)
+
+VALUES(
+
+?,
+?,
+?
+
+)
+""";
+
+try(
+
+Connection con=
+DBConnection.getConnection();
+
+PreparedStatement ps=
+con.prepareStatement(sql)
+
+){
+
+ps.setInt(
+1,
+departmentId
+);
+
+ps.setInt(
+2,
+semester
+);
+
+ps.setString(
+3,
+subjectName
+);
+
+ps.executeUpdate();
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+}
+
+
+
+//=====================
+// DELETE SUBJECT
+//=====================
+
+public boolean deleteSubject(
+int subjectId
+){
+
+try(
+
+Connection con=
+DBConnection.getConnection()
+
+){
+
+con.setAutoCommit(false);
+
+
+// DELETE MARKS
+
+PreparedStatement ps1=
+con.prepareStatement(
+"""
+DELETE FROM marks
+WHERE subject_id=?
+"""
+);
+
+ps1.setInt(
+1,
+subjectId
+);
+
+ps1.executeUpdate();
+
+
+// DELETE SUBJECT
+
+PreparedStatement ps2=
+con.prepareStatement(
+"""
+DELETE FROM subjects
+WHERE id=?
+"""
+);
+
+ps2.setInt(
+1,
+subjectId
+);
+
+int deleted=
+ps2.executeUpdate();
+
+con.commit();
+
+return deleted>0;
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return false;
+
+}
 }

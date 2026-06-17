@@ -1,1 +1,689 @@
-<h1> SUBJECT MANAGEMENT - ADD/DELETE THEM</h1>
+<style>
+
+/* ==========================
+MAIN CARD
+========================== */
+
+.admin-card{
+
+background:#FFFFFF;
+
+padding:32px;
+
+border-radius:20px;
+
+}
+
+
+/* ==========================
+HEADER
+========================== */
+
+.header{
+
+margin-bottom:28px;
+
+}
+
+.header h2{
+
+font-size:28px;
+
+font-weight:700;
+
+color:#0F172A;
+
+margin-bottom:6px;
+
+}
+
+.header p{
+
+color:#64748B;
+
+}
+
+
+/* ==========================
+MESSAGES
+========================== */
+
+.message{
+
+padding:16px 18px;
+
+border-radius:14px;
+
+margin-bottom:20px;
+
+font-size:14px;
+
+font-weight:600;
+
+animation:fade .25s ease;
+
+}
+
+.success-message{
+
+background:#DCFCE7;
+
+border:1px solid #86EFAC;
+
+color:#166534;
+
+}
+
+.error-message{
+
+background:#FEE2E2;
+
+border:1px solid #FCA5A5;
+
+color:#991B1B;
+
+}
+
+
+@keyframes fade{
+
+from{
+
+opacity:0;
+
+transform:
+translateY(-8px);
+
+}
+
+to{
+
+opacity:1;
+
+}
+
+}
+
+
+/* ==========================
+TOP SECTION
+========================== */
+
+.section{
+
+display:grid;
+
+grid-template-columns:
+1fr
+180px
+auto;
+
+gap:16px;
+
+margin-bottom:20px;
+
+}
+
+
+select,
+input{
+
+width:100%;
+
+padding:14px 16px;
+
+border:1px solid #CBD5E1;
+
+border-radius:14px;
+
+background:#F8FAFC;
+
+font-size:14px;
+
+outline:none;
+
+transition:.2s;
+
+}
+
+select:focus,
+input:focus{
+
+border-color:#2563EB;
+
+box-shadow:
+0 0 0 4px rgba(37,99,235,.12);
+
+}
+
+
+/* ==========================
+BUTTONS
+========================== */
+
+button{
+
+border:none;
+
+padding:14px 22px;
+
+border-radius:14px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.load-btn{
+
+background:#2563EB;
+
+color:white;
+
+}
+
+.load-btn:hover{
+
+background:#1D4ED8;
+
+}
+
+.save-btn{
+
+background:#10B981;
+
+color:white;
+
+}
+
+.save-btn:hover{
+
+background:#059669;
+
+}
+
+.delete-btn{
+
+display:none;
+
+margin-left:auto;
+
+margin-top:18px;
+
+background:#DC2626;
+
+color:white;
+
+}
+
+.delete-btn:hover{
+
+background:#B91C1C;
+
+}
+
+
+/* ==========================
+TABLE
+========================== */
+
+.table-box{
+
+margin-top:20px;
+
+overflow:hidden;
+
+border-radius:18px;
+
+border:1px solid #E2E8F0;
+
+}
+
+
+.subject-table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+
+.subject-table th{
+
+background:#0F172A;
+
+color:white;
+
+padding:18px;
+
+text-align:left;
+
+font-size:14px;
+
+}
+
+
+.subject-table td{
+
+padding:18px;
+
+border-bottom:1px solid #E2E8F0;
+
+}
+
+
+.subject-table tr{
+
+transition:.2s;
+
+cursor:pointer;
+
+}
+
+
+.subject-table tr:hover{
+
+background:#EFF6FF;
+
+}
+
+
+.subject-table tr.selected{
+
+background:#DBEAFE;
+
+}
+
+
+.subject-table tr.selected td{
+
+color:#1D4ED8;
+
+font-weight:600;
+
+}
+
+
+/* ==========================
+EMPTY
+========================== */
+
+.empty{
+
+padding:60px;
+
+text-align:center;
+
+color:#94A3B8;
+
+font-size:15px;
+
+}
+
+.empty h3{
+
+color:#334155;
+
+margin-bottom:8px;
+
+}
+
+</style>
+
+
+
+<div class="admin-card">
+
+<div class="header">
+
+<h2>
+Subject Management
+</h2>
+
+<p>
+Select department and semester to manage subjects
+</p>
+
+</div>
+
+
+
+<!-- MESSAGE -->
+
+<div
+th:if="${message}"
+id="messageBox"
+class="message success-message">
+
+<span
+th:text="${message}">
+</span>
+
+</div>
+
+
+<div
+th:if="${error}"
+id="errorBox"
+class="message error-message">
+
+<span
+th:text="${error}">
+</span>
+
+</div>
+
+
+
+<!-- FILTER -->
+
+<form
+th:action="@{/admin/subjects/filter}"
+method="post">
+
+<div class="section">
+
+<select
+name="departmentId"
+required>
+
+<option value="">
+Select Department
+</option>
+
+<option
+
+th:each=
+"department:${departments}"
+
+th:value=
+"${department.id}"
+
+th:text=
+"${department.departmentName}">
+
+</option>
+
+</select>
+
+
+
+<select
+name="semester"
+required>
+
+<option value="1">Semester 1</option>
+<option value="2">Semester 2</option>
+<option value="3">Semester 3</option>
+<option value="4">Semester 4</option>
+<option value="5">Semester 5</option>
+<option value="6">Semester 6</option>
+<option value="7">Semester 7</option>
+<option value="8">Semester 8</option>
+
+</select>
+
+
+<button
+class="load-btn">
+
+Load
+
+</button>
+
+</div>
+
+</form>
+
+
+
+<!-- ADD -->
+
+<form
+th:action="@{/admin/subjects/add}"
+method="post">
+
+<input
+type="hidden"
+name="departmentId"
+th:value="${param.departmentId}">
+
+<input
+type="hidden"
+name="semester"
+th:value="${param.semester}">
+
+
+<div class="section">
+
+<input
+
+name="subjectName"
+
+placeholder=
+"Enter Subject Name"
+
+required>
+
+
+<button
+class="save-btn">
+
+Save
+
+</button>
+
+</div>
+
+</form>
+
+
+
+<!-- TABLE -->
+
+<div class="table-box">
+
+<table class="subject-table">
+
+<thead>
+
+<tr>
+
+<th>
+Subjects
+</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+th:if="${subjects!=null and !subjects.isEmpty()}">
+
+<tr
+
+th:each=
+"subject:${subjects}"
+
+th:data-id=
+"${subject.id}"
+
+ondblclick=
+"selectSubject(this)"
+
+>
+
+<td
+th:text=
+"${subject.subjectName}">
+</td>
+
+</tr>
+
+</tbody>
+
+
+
+<tbody
+th:if="${subjects==null or subjects.isEmpty()}">
+
+<tr>
+
+<td class="empty">
+
+<h3>
+No subjects added yet
+</h3>
+
+Choose filters and create your first subject
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- DELETE -->
+
+<form
+
+id="deleteForm"
+
+th:action=
+"@{/admin/subjects/delete}"
+
+method="post">
+
+<input
+id="subjectId"
+name="subjectId"
+type="hidden">
+
+<input
+type="hidden"
+name="departmentId"
+th:value="${param.departmentId}">
+
+<input
+type="hidden"
+name="semester"
+th:value="${param.semester}">
+
+
+<button
+
+id="deleteBtn"
+
+class="delete-btn">
+
+Delete Subject
+
+</button>
+
+</form>
+
+</div>
+
+
+
+<script>
+
+function selectSubject(
+row
+){
+
+document
+.querySelectorAll(
+".subject-table tr"
+)
+
+.forEach(
+
+r=>
+r.classList.remove(
+"selected"
+)
+
+);
+
+row.classList.add(
+"selected"
+);
+
+document
+.getElementById(
+"subjectId"
+)
+.value=
+row.dataset.id;
+
+document
+.getElementById(
+"deleteBtn"
+)
+.style.display=
+"block";
+
+}
+
+
+
+document
+.getElementById(
+"deleteForm"
+)
+
+?.addEventListener(
+
+"submit",
+
+function(e){
+
+const ok=
+
+confirm(
+
+"Students are assigned to this subject.\n\nRelated marks will also be removed.\n\nProceed?"
+
+);
+
+if(!ok){
+
+e.preventDefault();
+
+}
+
+}
+
+);
+
+
+
+setTimeout(()=>{
+
+document
+.getElementById(
+"messageBox"
+)
+?.remove();
+
+document
+.getElementById(
+"errorBox"
+)
+?.remove();
+
+},4000);
+
+</script>
