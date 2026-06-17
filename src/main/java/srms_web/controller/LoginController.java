@@ -123,7 +123,7 @@ return "redirect:/student/student-dashboard";
         ) {
 
             return
-                    "redirect:/admin/dashboard";
+                    "redirect:/admin";
 
         }
 

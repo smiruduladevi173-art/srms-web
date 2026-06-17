@@ -1,0 +1,531 @@
+<style>
+
+/* PAGE */
+.admin-card{
+    background:#FFFFFF;
+    border-radius:18px;
+    padding:32px;
+    box-shadow:
+    0 10px 30px rgba(15,23,42,.06);
+}
+
+/* TITLE */
+
+.section-title{
+    color:#0F172A;
+    font-size:26px;
+    font-weight:700;
+}
+
+.section-sub{
+    color:#64748B;
+    margin-top:6px;
+}
+
+/* MESSAGE */
+
+.message{
+    padding:14px 18px;
+    border-radius:12px;
+    margin-top:20px;
+    margin-bottom:20px;
+    animation:fade .3s ease;
+}
+
+.success-message{
+    background:#ECFDF5;
+    color:#065F46;
+    border:1px solid #A7F3D0;
+}
+
+.error-message{
+    background:#FEF2F2;
+    color:#991B1B;
+    border:1px solid #FECACA;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(-8px);
+}
+
+to{
+opacity:1;
+transform:none;
+}
+
+}
+
+/* FORM */
+
+.department-form{
+
+display:flex;
+gap:14px;
+margin-top:28px;
+
+}
+
+.department-form input{
+
+flex:1;
+
+padding:14px 18px;
+
+border:1px solid #CBD5E1;
+
+background:#F8FAFC;
+
+border-radius:12px;
+
+outline:none;
+
+transition:.25s;
+
+}
+
+.department-form input:focus{
+
+border-color:#3B82F6;
+
+box-shadow:
+0 0 0 4px rgba(59,130,246,.12);
+
+}
+
+/* BUTTON */
+
+.save-btn{
+
+background:#3B82F6;
+
+color:white;
+
+border:none;
+
+padding:14px 24px;
+
+border-radius:12px;
+
+font-weight:600;
+
+cursor:pointer;
+
+transition:.25s;
+
+}
+
+.save-btn:hover{
+
+transform:translateY(-2px);
+
+background:#2563EB;
+
+}
+
+/* TABLE */
+
+.table-wrapper{
+
+margin-top:30px;
+
+border:1px solid #E2E8F0;
+
+border-radius:16px;
+
+overflow:hidden;
+
+}
+
+.department-table{
+
+width:100%;
+
+border-collapse:collapse;
+
+}
+
+.department-table thead{
+
+background:#1D4ED8;
+
+}
+
+.department-table th{
+
+padding:18px;
+
+color:white;
+
+text-align:left;
+
+font-weight:600;
+
+}
+
+.department-table td{
+
+padding:18px;
+
+border-bottom:1px solid #E2E8F0;
+
+color:#334155;
+
+}
+
+.department-table tbody tr{
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.department-table tbody tr:hover{
+
+background:#F8FAFC;
+
+}
+
+.department-table tr.selected{
+
+background:#DBEAFE;
+
+}
+
+.department-table tr.selected td{
+
+color:#1D4ED8;
+
+font-weight:600;
+
+}
+
+/* STUDENT COUNT */
+
+.badge{
+
+display:inline-block;
+
+padding:6px 12px;
+
+background:#EFF6FF;
+
+color:#2563EB;
+
+border-radius:999px;
+
+font-size:13px;
+
+}
+
+/* DELETE */
+
+.action-bar{
+
+display:flex;
+
+justify-content:flex-end;
+
+margin-top:20px;
+
+}
+
+.delete-btn{
+
+display:none;
+
+background:#EF4444;
+
+color:white;
+
+border:none;
+
+padding:14px 22px;
+
+border-radius:12px;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:.2s;
+
+}
+
+.delete-btn:hover{
+
+background:#DC2626;
+
+transform:translateY(-2px);
+
+}
+
+.delete-btn.show{
+
+display:block;
+
+}
+
+/* EMPTY */
+
+.empty{
+
+padding:40px;
+
+text-align:center;
+
+color:#94A3B8;
+
+}
+
+</style>
+
+
+
+<div class="admin-card">
+
+<div>
+
+<h2 class="section-title">
+Department Management
+</h2>
+
+<p class="section-sub">
+Double click a department to select and delete
+</p>
+
+</div>
+
+
+<!-- SUCCESS -->
+
+<div
+th:if="${message}"
+class="message success-message"
+id="messageBox">
+
+<span
+th:text="${message}">
+</span>
+
+</div>
+
+
+<!-- ERROR -->
+
+<div
+th:if="${error}"
+class="message error-message"
+id="errorBox">
+
+<span
+th:text="${error}">
+</span>
+
+</div>
+
+
+
+<!-- ADD -->
+
+<form
+th:action="@{/admin/departments/add}"
+method="post"
+class="department-form">
+
+<input
+type="text"
+name="departmentName"
+placeholder="Enter Department Name"
+required>
+
+<button
+type="submit"
+class="save-btn">
+
++ Add Department
+
+</button>
+
+</form>
+
+
+
+<!-- DELETE -->
+
+<form
+th:action="@{/admin/departments/delete}"
+method="post"
+id="deleteForm">
+
+<input
+type="hidden"
+name="id"
+id="selectedId">
+
+<div class="table-wrapper">
+
+<table class="department-table">
+
+<thead>
+
+<tr>
+
+<th>Department</th>
+
+<th>Students</th>
+
+</tr>
+
+</thead>
+
+
+<tbody
+th:if="${!#lists.isEmpty(departments)}">
+
+<tr
+th:each="department : ${departments}"
+
+th:attr="
+data-id=${department.id}"
+
+ondblclick="selectDepartment(this)">
+
+<td
+th:text="${department.departmentName}">
+</td>
+
+<td>
+
+<span
+class="badge"
+th:text="${department.studentCount}">
+
+</span>
+
+</td>
+
+</tr>
+
+</tbody>
+
+
+<tbody
+th:if="${#lists.isEmpty(departments)}">
+
+<tr>
+
+<td
+colspan="2"
+class="empty">
+
+No departments created
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<div class="action-bar">
+
+<button
+type="submit"
+id="deleteBtn"
+class="delete-btn">
+
+Delete Department
+
+</button>
+
+</div>
+
+</form>
+
+</div>
+
+
+
+<script>
+
+function selectDepartment(row){
+
+document
+.querySelectorAll(
+".department-table tr"
+)
+
+.forEach(
+r=>r.classList.remove(
+"selected"
+)
+);
+
+row.classList.add(
+"selected"
+);
+
+document
+.getElementById(
+"selectedId"
+)
+.value=
+row.dataset.id;
+
+document
+.getElementById(
+"deleteBtn"
+)
+.classList.add(
+"show"
+);
+
+}
+
+
+
+setTimeout(()=>{
+
+const success=
+document.getElementById(
+"messageBox"
+);
+
+const error=
+document.getElementById(
+"errorBox"
+);
+
+if(success){
+
+success.style.opacity="0";
+
+setTimeout(
+()=>success.remove(),
+400
+);
+
+}
+
+if(error){
+
+error.style.opacity="0";
+
+setTimeout(
+()=>error.remove(),
+400
+);
+
+}
+
+},4000);
+
+</script>

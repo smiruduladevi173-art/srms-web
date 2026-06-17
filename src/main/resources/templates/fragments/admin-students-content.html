@@ -1,0 +1,111 @@
+<div class="student-panel">
+    <h1>STUDENT MANAGEMENT - ADD/DELETE</h1>
+
+    <form th:action="@{/admin/students/add}" method="post" class="student-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="rollNumber">Roll No</label>
+                <input type="text" id="rollNumber" name="rollNumber" placeholder="Enter roll number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter student name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="departmentId">Department</label>
+                <select id="departmentId" name="departmentId" required>
+                    <option value="" disabled selected>Select department</option>
+                    <option th:each="dept : ${departments}"
+                            th:value="${dept.id}"
+                            th:text="${dept.departmentName}">
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dob">DOB</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+        </div>
+
+        <button type="submit" class="save-btn">Save</button>
+    </form>
+</div>
+
+<style>
+.student-panel {
+    max-width: 900px;
+}
+
+.student-panel h1 {
+    font-size: 28px;
+    margin-bottom: 24px;
+    color: #0f172a;
+}
+
+.student-form {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 24px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.save-btn {
+    margin-top: 20px;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.save-btn:hover {
+    background: #1d4ed8;
+}
+</style>

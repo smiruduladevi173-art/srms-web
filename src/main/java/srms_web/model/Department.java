@@ -25,5 +25,17 @@ this.departmentName=
 departmentName;
 }
 
+private int studentCount;
+
+public int getStudentCount() {
+    return studentCount;
+}
+
+public void setStudentCount(
+        int studentCount
+) {
+    this.studentCount = studentCount;
+}
+
 }
 
