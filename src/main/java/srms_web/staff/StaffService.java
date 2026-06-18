@@ -1,4 +1,4 @@
-package srms_web.staff;
+﻿package srms_web.staff;
 
 import srms_web.database.DBConnection;
 import srms_web.model.AnalyticsData;
@@ -18,665 +18,259 @@ import org.springframework.stereotype.Service;
 
 import srms_web.model.Subject;
 
-
-
-
 @Service
 public class StaffService {
 
-
-// =========================
-// GET STUDENTS
-// =========================
-
-public List<StudentInfo> getAllStudents() {
-
-    List<StudentInfo> students =
-            new ArrayList<>();
-
-    try {
-
-        Connection con =
-                DBConnection.getConnection();
+    // =========================
+    // GET STUDENTS
+    // =========================
+    public List<StudentInfo> getAllStudents() {
+        List<StudentInfo> students = new ArrayList<>();
 
         String sql =
                 """
                 SELECT
-
-                s.student_id,
-
-                s.roll_number,
-
-                s.name,
-
-                s.gender,
-
-                s.dob,
-
-                d.department_name
-
+                    s.student_id,
+                    s.roll_number,
+                    s.name,
+                    s.gender,
+                    s.dob,
+                    d.department_name
                 FROM students s
-
                 JOIN departments d
-
-                ON s.department_id=d.id
+                    ON s.department_id = d.id
                 """;
 
-        PreparedStatement pst =
-                con.prepareStatement(
-                        sql
-                );
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
 
-        ResultSet rs =
-                pst.executeQuery();
+            while (rs.next()) {
+                StudentInfo student = new StudentInfo();
+                student.setStudentId(rs.getInt("student_id"));
+                student.setRollNumber(rs.getString("roll_number"));
+                student.setName(rs.getString("name"));
+                student.setGender(rs.getString("gender"));
+                student.setDob(rs.getString("dob"));
+                student.setDepartment(rs.getString("department_name"));
+                students.add(student);
+            }
 
-              
-
-        while (
-
-                rs.next()
-
-        ) {
-
-            StudentInfo student =
-                    new StudentInfo();
-
-            student.setStudentId(
-
-                    rs.getInt(
-                            "student_id"
-                    )
-
-            );
-
-            student.setRollNumber(
-
-                    rs.getString(
-                            "roll_number"
-                    )
-
-            );
-
-            student.setName(
-
-                    rs.getString(
-                            "name"
-                    )
-
-            );
-
-            student.setGender(
-
-                    rs.getString(
-                            "gender"
-                    )
-
-            );
-
-            student.setDob(
-
-                    rs.getString(
-                            "dob"
-                    )
-
-            );
-
-            student.setDepartment(
-
-                    rs.getString(
-                            "department_name"
-                    )
-
-            );
-
-            students.add(
-                    student
-            );
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-       
-  {
-    con.close();
-}
-
+        return students;
     }
 
-    
-
-    catch (
-
-            Exception e
-
+    // =========================
+    // SAVE ALL
+    // =========================
+    public void updateStudents(
+            List<String> rollNumbers,
+            List<String> names,
+            List<String> genders,
+            List<String> dobs
     ) {
+        String sql =
+                """
+                UPDATE students
+                SET name = ?,
+                    gender = ?,
+                    dob = ?
+                WHERE roll_number = ?
+                """;
 
-        e.printStackTrace();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
+            for (int i = 0; i < rollNumbers.size(); i++) {
+                pst.setString(1, names.get(i));
+                pst.setString(2, genders.get(i));
+                pst.setString(3, dobs.get(i));
+                pst.setString(4, rollNumbers.get(i));
+                pst.executeUpdate();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    
-    
 
-    
-
-    return students;
-
-    
-
-}
-
-// =========================
-// SAVE ALL
-// =========================
-
-public void updateStudents(
-
-List<String> rollNumbers,
-
-List<String> names,
-
-List<String> genders,
-
-List<String> dobs
-
-){
-
-try{
-
-Connection con =
-DBConnection.getConnection();
-
-String sql =
-"""
-UPDATE students
-
-SET
-
-name=?,
-gender=?,
-dob=?
-
-WHERE roll_number=?
-
-""";
-
-PreparedStatement pst =
-con.prepareStatement(
-sql
-);
-
-for(
-
-int i=0;
-
-i<rollNumbers.size();
-
-i++
-
-){
-
-pst.setString(
-1,
-names.get(i)
-);
-
-pst.setString(
-2,
-genders.get(i)
-);
-
-pst.setString(
-3,
-dobs.get(i)
-);
-
-pst.setString(
-4,
-rollNumbers.get(i)
-);
-
-pst.executeUpdate();
-
-}
-
- {
-    con.close();
-}
-
-}
-
-
-
-catch(Exception e){
-
-e.printStackTrace();
-
-}
-
-}
-
-/*================================
-STUDENT MARKS
-================================== */
-public List<StudentMark>
-loadMarks(
-int departmentId,
-int subjectId
-){
-
-List<StudentMark> list =
-new ArrayList<>();
-
-try{
-
-Connection con =
-DBConnection.getConnection();
-
-String sql =
-"""
-SELECT
-s.student_id,
-s.roll_number,
-s.name,
-m.marks
-
-FROM students s
-
-LEFT JOIN marks m
-ON s.student_id = m.student_id
-AND m.subject_id = ?
-
-WHERE s.department_id = ?
-
-ORDER BY s.roll_number
-""";
-
-PreparedStatement pst =
-con.prepareStatement(sql);
-
-pst.setInt(
-1,
-subjectId
-);
-
-pst.setInt(
-2,
-departmentId
-);
-
-ResultSet rs =
-pst.executeQuery();
-
-while(rs.next()){
-
-StudentMark row =
-new StudentMark();
-
-row.setStudentId(
-rs.getInt(
-"student_id"
-)
-);
-
-row.setRollNumber(
-rs.getString(
-"roll_number"
-)
-);
-
-row.setName(
-rs.getString(
-"name"
-)
-);
-
-row.setMarks(
-(Integer)rs.getObject(
-"marks"
-)
-);
-
-list.add(row);
-
-}
-
-System.out.println(
-"Students Loaded = "
-+ list.size()
-);
- {
-    con.close();
-}
-}
-catch(Exception e){
-
-e.printStackTrace();
-
-}
-
-return list;
-
-}
-
-/*================================
-subject
-=================================== */
-public List<Subject>
-getSubjects(
-
-int departmentId
-
-){
-
-List<Subject>
-list=
-new ArrayList<>();
-
-try{
-
-/* DEBUG */
-
-System.out.println(
-"Department = "
-+
-departmentId
-);
-
-Connection con=
-DBConnection
-.getConnection();
-
-String sql=
-"""
-SELECT
-
-id,
-
-subject_name
-
-FROM subjects
-
-WHERE department_id=?
-""";
-
-PreparedStatement pst=
-con.prepareStatement(
-sql
-);
-
-pst.setInt(
-1,
-departmentId
-);
-
-ResultSet rs=
-pst.executeQuery();
-
-while(
-
-rs.next()
-
-){
-
-/* DEBUG */
-
-System.out.println(
-
-"Subject = "
-
-+
-
-rs.getString(
-"subject_name"
-)
-
-);
-
-Subject s=
-new Subject();
-
-s.setId(
-
-rs.getInt(
-"id"
-)
-
-);
-
-s.setSubjectName(
-
-rs.getString(
-"subject_name"
-)
-
-);
-
-list.add(
-s
-);
-
-}
-
-System.out.println(
-
-"Subjects Loaded = "
-
-+
-
-list.size()
-
-);
-
- {
-    con.close();
-}
-
-}
-
-
-catch(
-
-Exception e
-
-){
-
-e.printStackTrace();
-
-}
-
-
-return list;
-
-}
-
-//=========================
-// DEPARTMENTS
-//=========================
-public List<Department> getDepartments(){
-
-    List<Department> list =
-    new ArrayList<>();
-
-    try{
-
-        Connection con =
-        DBConnection.getConnection();
+    /*================================
+    STUDENT MARKS
+    ================================== */
+    public List<StudentMark> loadMarks(int departmentId, int subjectId) {
+        List<StudentMark> list = new ArrayList<>();
 
         String sql =
-        """
-        SELECT
-        id,
-        department_name
-        FROM departments
-        """;
+                """
+                SELECT
+                    s.student_id,
+                    s.roll_number,
+                    s.name,
+                    m.marks
+                FROM students s
+                LEFT JOIN marks m
+                    ON s.student_id = m.student_id
+                    AND m.subject_id = ?
+                WHERE s.department_id = ?
+                ORDER BY s.roll_number
+                """;
 
-        PreparedStatement pst =
-        con.prepareStatement(sql);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-        ResultSet rs =
-        pst.executeQuery();
+            pst.setInt(1, subjectId);
+            pst.setInt(2, departmentId);
 
-        while(rs.next()){
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    StudentMark row = new StudentMark();
+                    row.setStudentId(rs.getInt("student_id"));
+                    row.setRollNumber(rs.getString("roll_number"));
+                    row.setName(rs.getString("name"));
+                    row.setMarks((Integer) rs.getObject("marks"));
+                    list.add(row);
+                }
+            }
 
-            Department d =
-            new Department();
+            System.out.println("Students Loaded = " + list.size());
 
-            d.setId(
-                rs.getInt("id")
-            );
-
-            d.setDepartmentName(
-                rs.getString(
-                    "department_name"
-                )
-            );
-
-            list.add(d);
-             {
-    con.close();
-}
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-    }catch(Exception e){
-
-        e.printStackTrace();
-
+        return list;
     }
 
-    return list;
+    /*================================
+    subject
+    =================================== */
+    public List<Subject> getSubjects(int departmentId) {
+        List<Subject> list = new ArrayList<>();
 
-}
-//=========================
-// SAVE MARKS
-//=========================
-public void saveMark(
-int studentId,
-int subjectId,
-int marks
-){
+        String sql =
+                """
+                SELECT
+                    id,
+                    subject_name
+                FROM subjects
+                WHERE department_id = ?
+                """;
 
-try(
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-Connection con =
-DBConnection.getConnection()
+            pst.setInt(1, departmentId);
 
-){
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    Subject s = new Subject();
+                    s.setId(rs.getInt("id"));
+                    s.setSubjectName(rs.getString("subject_name"));
+                    list.add(s);
+                }
+            }
 
-String checkSql =
-"""
-SELECT mark_id
-FROM marks
-WHERE student_id=?
-AND subject_id=?
-""";
+            System.out.println("Subjects Loaded = " + list.size());
 
-try(
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-PreparedStatement check =
-con.prepareStatement(checkSql)
+        return list;
+    }
 
-){
+    //=========================
+    // DEPARTMENTS
+    //=========================
+    public List<Department> getDepartments() {
+        List<Department> list = new ArrayList<>();
 
-check.setInt(1,studentId);
-check.setInt(2,subjectId);
+        String sql =
+                """
+                SELECT
+                    id,
+                    department_name
+                FROM departments
+                """;
 
-try(
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
 
-ResultSet rs =
-check.executeQuery()
+            while (rs.next()) {
+                Department d = new Department();
+                d.setId(rs.getInt("id"));
+                d.setDepartmentName(rs.getString("department_name"));
+                list.add(d);
+            }
 
-){
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-if(rs.next()){
+        return list;
+    }
 
-String updateSql =
-"""
-UPDATE marks
-SET marks=?
-WHERE student_id=?
-AND subject_id=?
-""";
+    //=========================
+    // SAVE MARKS
+    //=========================
+    public void saveMark(int studentId, int subjectId, int marks) {
+        String checkSql =
+                """
+                SELECT mark_id
+                FROM marks
+                WHERE student_id = ?
+                  AND subject_id = ?
+                """;
+        String updateSql =
+                """
+                UPDATE marks
+                SET marks = ?
+                WHERE student_id = ?
+                  AND subject_id = ?
+                """;
+        String insertSql =
+                """
+                INSERT INTO marks(student_id, subject_id, marks)
+                VALUES (?, ?, ?)
+                """;
 
-try(
+        try (Connection con = DBConnection.getConnection()) {
+            try (PreparedStatement check = con.prepareStatement(checkSql)) {
+                check.setInt(1, studentId);
+                check.setInt(2, subjectId);
 
-PreparedStatement pst =
-con.prepareStatement(updateSql)
+                try (ResultSet rs = check.executeQuery()) {
+                    if (rs.next()) {
+                        try (PreparedStatement pst = con.prepareStatement(updateSql)) {
+                            pst.setInt(1, marks);
+                            pst.setInt(2, studentId);
+                            pst.setInt(3, subjectId);
+                            pst.executeUpdate();
+                        }
+                    } else {
+                        try (PreparedStatement pst = con.prepareStatement(insertSql)) {
+                            pst.setInt(1, studentId);
+                            pst.setInt(2, subjectId);
+                            pst.setInt(3, marks);
+                            pst.executeUpdate();
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-){
-
-pst.setInt(1,marks);
-pst.setInt(2,studentId);
-pst.setInt(3,subjectId);
-
-pst.executeUpdate();
-
-}
-
-}else{
-
-String insertSql =
-"""
-INSERT INTO marks(
-student_id,
-subject_id,
-marks
-)
-VALUES(
-?,
-?,
-?
-)
-""";
-
-try(
-
-PreparedStatement pst =
-con.prepareStatement(insertSql)
-
-){
-
-pst.setInt(1,studentId);
-pst.setInt(2,subjectId);
-pst.setInt(3,marks);
-
-pst.executeUpdate();
-
-}
-
-}
-
-}
-
-}
- {
-    con.close();
-}
-
-}
-catch(Exception e){
-
-e.printStackTrace();
-
-}
-
-}
-
-//=========================
-//GET ANALYTICS SUMMARY
-//=========================
-public AnalyticsSummary getAnalyticsSummary(
-        int departmentId
-) {
-
-    AnalyticsSummary summary =
-            new AnalyticsSummary();
-
-            
-
-    try {
-
-        Connection con =
-                DBConnection.getConnection();
+    //=========================
+    //GET ANALYTICS SUMMARY
+    //=========================
+    public AnalyticsSummary getAnalyticsSummary(int departmentId) {
+        AnalyticsSummary summary = new AnalyticsSummary();
 
         String sql =
                 """
@@ -685,146 +279,82 @@ public AnalyticsSummary getAnalyticsSummary(
                     AVG(m.marks) average_marks,
                     MAX(m.marks) highest_mark,
                     MIN(m.marks) lowest_mark,
-
                     (
                         SUM(
                             CASE
-                                WHEN m.marks >= 50
-                                THEN 1
+                                WHEN m.marks >= 50 THEN 1
                                 ELSE 0
                             END
                         ) * 100.0
                     ) / COUNT(*) pass_percentage
-
                 FROM students s
-
                 JOIN marks m
-                ON s.student_id = m.student_id
-
+                    ON s.student_id = m.student_id
                 WHERE s.department_id = ?
                 """;
 
-        PreparedStatement pst =
-                con.prepareStatement(sql);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-        pst.setInt(1, departmentId);
+            pst.setInt(1, departmentId);
 
-        ResultSet rs =
-                pst.executeQuery();
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    summary.setTotalStudents(rs.getInt("total_students"));
+                    summary.setAverageMarks(rs.getDouble("average_marks"));
+                    summary.setHighestMark(rs.getInt("highest_mark"));
+                    summary.setLowestMark(rs.getInt("lowest_mark"));
+                    summary.setPassPercentage(rs.getDouble("pass_percentage"));
+                }
+            }
 
-        if(rs.next()) {
-
-            summary.setTotalStudents(
-                    rs.getInt("total_students")
-            );
-
-            summary.setAverageMarks(
-                    rs.getDouble("average_marks")
-            );
-
-            summary.setHighestMark(
-                    rs.getInt("highest_mark")
-            );
-
-            summary.setLowestMark(
-                    rs.getInt("lowest_mark")
-            );
-
-            summary.setPassPercentage(
-                    rs.getDouble("pass_percentage")
-            );
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-         {
-    con.close();
-}
 
-    }
-    catch(Exception e) {
-
-        e.printStackTrace();
-
+        return summary;
     }
 
-    return summary;
-
-  
-}
-
-//=========================
-//TOP STUDENT BY DEPARTMENT
-//=========================
-public List<AnalyticsData>
-getTopStudentsByDepartment(
-        int departmentId
-) {
-
-    List<AnalyticsData> list =
-            new ArrayList<>();
-
-    try {
-
-        Connection con =
-                DBConnection.getConnection();
+    //=========================
+    //TOP STUDENT BY DEPARTMENT
+    //=========================
+    public List<AnalyticsData> getTopStudentsByDepartment(int departmentId) {
+        List<AnalyticsData> list = new ArrayList<>();
 
         String sql =
                 """
                 SELECT
                     s.name,
                     AVG(m.marks) average
-
                 FROM students s
-
                 JOIN marks m
-                ON s.student_id = m.student_id
-
+                    ON s.student_id = m.student_id
                 WHERE s.department_id = ?
-
                 GROUP BY
                     s.student_id,
                     s.name
-
                 ORDER BY average DESC
-
                 LIMIT 5
                 """;
 
-        PreparedStatement pst =
-                con.prepareStatement(sql);
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-        pst.setInt(1, departmentId);
+            pst.setInt(1, departmentId);
 
-        ResultSet rs =
-                pst.executeQuery();
+            try (ResultSet rs = pst.executeQuery()) {
+                while (rs.next()) {
+                    AnalyticsData data = new AnalyticsData();
+                    data.setStudentName(rs.getString("name"));
+                    data.setAverage(rs.getDouble("average"));
+                    list.add(data);
+                }
+            }
 
-        while(rs.next()) {
-
-            AnalyticsData data =
-                    new AnalyticsData();
-
-            data.setStudentName(
-                    rs.getString("name")
-            );
-
-            data.setAverage(
-                    rs.getDouble("average")
-            );
-
-            list.add(data);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
+        return list;
     }
-    catch(Exception e) {
-
-        e.printStackTrace();
-
-    }
-
-    return list;
-}
-
-
-
-
-
-
 }
