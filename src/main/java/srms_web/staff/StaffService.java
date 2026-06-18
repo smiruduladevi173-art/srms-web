@@ -1,4 +1,4 @@
-﻿package srms_web.staff;
+package srms_web.staff;
 
 import srms_web.database.DBConnection;
 import srms_web.model.AnalyticsData;
