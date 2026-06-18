@@ -13,6 +13,10 @@ import srms_web.database.DBConnection;
 import srms_web.model.Department;
 import srms_web.model.Subject;
 
+import srms_web.auth.PasswordUtil;
+import srms_web.model.Student;
+import srms_web.model.StudentInfo;
+
 @Service
 public class AdminService {
 
@@ -484,4 +488,604 @@ e.printStackTrace();
 return false;
 
 }
+
+//=====================
+// GET STUDENTS
+//=====================
+
+public List<StudentInfo>
+getStudents(
+String search
+){
+
+List<StudentInfo> students =
+new ArrayList<>();
+
+if(search == null){
+
+search = "";
+
+}
+
+String sql =
+"""
+SELECT
+
+s.student_id,
+s.roll_number,
+s.name,
+s.dob,
+s.gender,
+
+d.department_name
+
+FROM students s
+
+JOIN departments d
+ON s.department_id=d.id
+
+WHERE
+
+LOWER(
+s.roll_number
+)
+
+LIKE LOWER(?)
+
+OR
+
+LOWER(
+s.name
+)
+
+LIKE LOWER(?)
+
+ORDER BY
+s.roll_number
+""";
+
+try(
+
+Connection con=
+DBConnection.getConnection();
+
+PreparedStatement ps=
+con.prepareStatement(sql)
+
+){
+
+String keyword=
+"%"+search+"%";
+
+ps.setString(
+1,
+keyword
+);
+
+ps.setString(
+2,
+keyword
+);
+
+try(
+
+ResultSet rs=
+ps.executeQuery()
+
+){
+
+while(rs.next()){
+
+StudentInfo student=
+new StudentInfo();
+
+student.setStudentId(
+rs.getInt(
+"student_id"
+)
+);
+
+student.setRollNumber(
+rs.getString(
+"roll_number"
+)
+);
+
+student.setName(
+rs.getString(
+"name"
+)
+);
+
+student.setDob(
+rs.getString(
+"dob"
+)
+);
+
+student.setGender(
+rs.getString(
+"gender"
+)
+);
+
+student.setDepartment(
+rs.getString(
+"department_name"
+)
+);
+
+students.add(
+student
+);
+
+}
+
+}
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return students;
+
+}
+
+//=====================
+// ROLL EXISTS
+//=====================
+
+public boolean
+rollExists(
+String rollNo
+){
+
+String sql=
+"""
+SELECT COUNT(*)
+
+FROM students
+
+WHERE roll_number=?
+""";
+
+try(
+
+Connection con=
+DBConnection.getConnection();
+
+PreparedStatement ps=
+con.prepareStatement(sql)
+
+){
+
+ps.setString(
+1,
+rollNo
+);
+
+ResultSet rs=
+ps.executeQuery();
+
+if(rs.next()){
+
+return rs.getInt(1)>0;
+
+}
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return false;
+
+}
+//=====================
+// USER EXISTS
+//=====================
+
+public boolean
+usernameExists(
+String username
+){
+
+String sql=
+"""
+SELECT COUNT(*)
+
+FROM users
+
+WHERE username=?
+""";
+
+try(
+
+Connection con=
+DBConnection.getConnection();
+
+PreparedStatement ps=
+con.prepareStatement(sql)
+
+){
+
+ps.setString(
+1,
+username
+);
+
+ResultSet rs=
+ps.executeQuery();
+
+if(rs.next()){
+
+return rs.getInt(1)>0;
+
+}
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return false;
+
+}
+//=====================
+// ADD STUDENT
+//=====================
+
+public String
+addStudent(
+Student student
+){
+
+if(
+
+rollExists(
+student.getRollNumber()
+)
+
+&&
+
+usernameExists(
+student.getUsername()
+)
+
+){
+
+return
+"Both Roll Number and Username already exist";
+
+}
+
+if(
+
+rollExists(
+student.getRollNumber()
+)
+
+){
+
+return
+"Roll Number already exists";
+
+}
+
+if(
+
+usernameExists(
+student.getUsername()
+)
+
+){
+
+return
+"Username already exists";
+
+}
+
+try(
+
+Connection con=
+DBConnection.getConnection()
+
+){
+
+con.setAutoCommit(
+false
+);
+
+String hash=
+
+PasswordUtil
+.hashPassword(
+
+student.getPassword()
+
+);
+
+
+// USERS
+
+PreparedStatement ps1=
+con.prepareStatement(
+
+"""
+INSERT INTO users(
+
+username,
+password,
+role,
+department_id
+
+)
+
+VALUES(
+
+?,
+?,
+'STUDENT',
+?
+
+)
+""",
+
+PreparedStatement
+.RETURN_GENERATED_KEYS
+
+);
+
+ps1.setString(
+1,
+student.getUsername()
+);
+
+ps1.setString(
+2,
+hash
+);
+
+ps1.setInt(
+3,
+student.getDepartmentId()
+);
+
+ps1.executeUpdate();
+
+ResultSet userKey=
+ps1.getGeneratedKeys();
+
+int userId=0;
+
+if(userKey.next()){
+
+userId=
+userKey.getInt(
+1
+);
+
+}
+
+
+// STUDENT
+
+PreparedStatement ps2=
+con.prepareStatement(
+
+"""
+INSERT INTO students(
+
+roll_number,
+name,
+dob,
+gender,
+department_id,
+user_id
+
+)
+
+VALUES(
+
+?,
+?,
+?,
+?,
+?,
+?
+
+)
+"""
+
+);
+
+ps2.setString(
+1,
+student.getRollNumber()
+);
+
+ps2.setString(
+2,
+student.getName()
+);
+
+ps2.setString(
+3,
+student.getDob()
+);
+
+ps2.setString(
+4,
+student.getGender()
+);
+
+ps2.setInt(
+5,
+student.getDepartmentId()
+);
+
+ps2.setInt(
+6,
+userId
+);
+
+ps2.executeUpdate();
+
+con.commit();
+
+return
+student.getRollNumber()
++
+" - "
++
+student.getName()
++
+" added successfully";
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return
+"Failed";
+
+}
+//=====================
+// DELETE STUDENT
+//=====================
+
+public boolean
+deleteStudent(
+int studentId
+){
+
+try(
+
+Connection con=
+DBConnection.getConnection()
+
+){
+
+con.setAutoCommit(
+false
+);
+
+int userId=0;
+
+
+// GET USER
+
+PreparedStatement ps=
+con.prepareStatement(
+
+"""
+SELECT user_id
+
+FROM students
+
+WHERE student_id=?
+"""
+);
+
+ps.setInt(
+1,
+studentId
+);
+
+ResultSet rs=
+ps.executeQuery();
+
+if(rs.next()){
+
+userId=
+rs.getInt(
+"user_id"
+);
+
+}
+
+
+// DELETE MARKS
+
+PreparedStatement p1=
+con.prepareStatement(
+
+"""
+DELETE FROM marks
+WHERE student_id=?
+"""
+);
+
+p1.setInt(
+1,
+studentId
+);
+
+p1.executeUpdate();
+
+
+// DELETE STUDENT
+
+PreparedStatement p2=
+con.prepareStatement(
+
+"""
+DELETE FROM students
+WHERE student_id=?
+"""
+);
+
+p2.setInt(
+1,
+studentId
+);
+
+p2.executeUpdate();
+
+
+// DELETE USER
+
+PreparedStatement p3=
+con.prepareStatement(
+
+"""
+DELETE FROM users
+WHERE id=?
+"""
+);
+
+p3.setInt(
+1,
+userId
+);
+
+p3.executeUpdate();
+
+con.commit();
+
+return true;
+
+}
+catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+return false;
+
+}
+
+
+
 }

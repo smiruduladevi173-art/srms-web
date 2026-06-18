@@ -316,20 +316,14 @@ th:classappend="${activePage == 'subjects'} ? 'active'">
 
 </a>
 
-<a
-th:href="@{/admin/dashboard(view='students')}"
-th:classappend="${activePage == 'students'} ? 'active'">
-
-👨‍🎓 Students
-
+<a th:href="@{/admin/students}"
+   th:classappend="${activePage == 'students'} ? 'active'">
+   👨‍🎓 Students
 </a>
 
-<a
-th:href="@{/admin/dashboard(view='analytics')}"
-th:classappend="${activePage == 'analytics'} ? 'active'">
-
-📊 Analytics
-
+<a th:href="@{/admin/analytics}"
+   th:classappend="${activePage == 'analytics'} ? 'active'">
+   📊 Analytics
 </a>
 
 </div>

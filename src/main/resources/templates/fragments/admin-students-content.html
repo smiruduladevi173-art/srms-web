@@ -1,111 +1,454 @@
-<div class="student-panel">
-    <h1>STUDENT MANAGEMENT - ADD/DELETE</h1>
+<div class="admin-card">
 
-    <form th:action="@{/admin/students/add}" method="post" class="student-form">
-        <div class="form-grid">
-            <div class="form-group">
-                <label for="rollNumber">Roll No</label>
-                <input type="text" id="rollNumber" name="rollNumber" placeholder="Enter roll number" required>
-            </div>
+<div class="student-layout">
 
-            <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter student name" required>
-            </div>
+    <!-- LEFT -->
+    <div class="student-form">
 
-            <div class="form-group">
-                <label for="departmentId">Department</label>
-                <select id="departmentId" name="departmentId" required>
-                    <option value="" disabled selected>Select department</option>
-                    <option th:each="dept : ${departments}"
-                            th:value="${dept.id}"
-                            th:text="${dept.departmentName}">
-                    </option>
-                </select>
-            </div>
+        <h2>🎓 Add Student</h2>
 
-            <div class="form-group">
-                <label for="dob">DOB</label>
-                <input type="date" id="dob" name="dob" required>
-            </div>
+        <form
+                th:action="@{/admin/students/add}"
+                method="post">
 
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter username" required>
-            </div>
+            <input
+                    type="text"
+                    name="rollNumber"
+                    placeholder="Roll Number"
+                    required>
 
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter password" required>
-            </div>
+            <input
+                    type="text"
+                    name="name"
+                    placeholder="Student Name"
+                    required>
+
+            <input
+                    type="date"
+                    name="dob"
+                    required>
+
+            <select
+                    name="departmentId"
+                    required>
+
+                <option value="">
+                    Select Department
+                </option>
+
+                <option
+                        th:each="dept:${departments}"
+                        th:value="${dept.id}"
+                        th:text="${dept.departmentName}">
+                </option>
+
+            </select>
+
+            <select
+                    name="gender"
+                    required>
+
+                <option value="">
+                    Select Gender
+                </option>
+
+                <option value="Female">
+                    Female
+                </option>
+
+                <option value="Male">
+                    Male
+                </option>
+
+            </select>
+
+            <input
+                    type="text"
+                    name="username"
+                    placeholder="Username"
+                    required>
+
+            <input
+                    type="password"
+                    name="password"
+                    placeholder="Password"
+                    required>
+
+            <button type="submit">
+                Add Student
+            </button>
+
+        </form>
+
+        <div
+                th:if="${message}"
+                class="success-msg"
+                th:text="${message}">
         </div>
 
-        <button type="submit" class="save-btn">Save</button>
-    </form>
+        <div
+                th:if="${error}"
+                class="error-msg"
+                th:text="${error}">
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="student-table">
+
+        <div class="table-header">
+
+            <h2>
+                Student Records
+            </h2>
+
+            <div class="search-bar">
+
+                <form
+                        th:action="@{/admin/students/search}"
+                        method="post">
+
+                    <input
+                            type="text"
+                            name="search"
+                            placeholder="Search Roll No / Name"
+                            th:value="${search}">
+
+                    <button>
+                        Search
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>Roll No</th>
+                <th>Name</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Department</th>
+                <th>Action</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            <tr
+                    th:each="student:${students}">
+
+                <td th:text="${student.rollNumber}">
+                </td>
+
+                <td th:text="${student.name}">
+                </td>
+
+                <td th:text="${student.dob}">
+                </td>
+
+                <td>
+
+                    <span
+                            class="gender-badge"
+                            th:text="${student.gender}">
+                    </span>
+
+                </td>
+
+                <td th:text="${student.department}">
+                </td>
+
+                <td>
+
+                    <form
+                            th:action="@{/admin/students/delete}"
+                            method="post"
+                            onsubmit="return confirm('Delete student?')">
+
+                        <input
+                                type="hidden"
+                                name="studentId"
+                                th:value="${student.studentId}">
+
+                        <button class="delete-btn">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
 </div>
 
 <style>
-.student-panel {
-    max-width: 900px;
+
+.student-layout{
+    display:grid;
+    grid-template-columns:370px 1fr;
+    gap:25px;
 }
 
-.student-panel h1 {
-    font-size: 28px;
-    margin-bottom: 24px;
-    color: #0f172a;
+/* LEFT CARD */
+
+.student-form{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
 }
 
-.student-form {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 24px;
+.student-form h2{
+    margin-bottom:25px;
+    color:#0F172A;
 }
 
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+.student-form form{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+.student-form input,
+.student-form select{
+
+    padding:14px;
+    border:1px solid #CBD5E1;
+    border-radius:12px;
+    background:#F8FAFC;
+    transition:.2s;
+
 }
 
-.form-group label {
-    font-weight: 600;
-    color: #334155;
+.student-form input:focus,
+.student-form select:focus{
+
+    outline:none;
+    border-color:#2563EB;
+    background:white;
+
 }
 
-.form-group input,
-.form-group select {
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-    font-size: 14px;
-    outline: none;
+.student-form button{
+
+    background:#2563EB;
+    color:white;
+    border:none;
+    padding:14px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    transition:.2s;
+
 }
 
-.form-group input:focus,
-.form-group select:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+.student-form button:hover{
+
+    background:#1D4ED8;
+
 }
 
-.save-btn {
-    margin-top: 20px;
-    background: #2563eb;
-    color: #fff;
-    border: none;
-    padding: 12px 18px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
+
+/* RIGHT CARD */
+
+.student-table{
+
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 4px 20px rgba(0,0,0,.05);
+
 }
 
-.save-btn:hover {
-    background: #1d4ed8;
+.table-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+
 }
+
+.table-header h2{
+
+    color:#0F172A;
+
+}
+
+
+/* SEARCH */
+
+.search-bar form{
+
+    display:flex;
+    gap:12px;
+
+}
+
+.search-bar input{
+
+    width:280px;
+    padding:14px;
+    border:1px solid #CBD5E1;
+    border-radius:12px;
+    background:#F8FAFC;
+
+}
+
+.search-bar button{
+
+    background:#2563EB;
+    color:white;
+    border:none;
+    padding:14px 20px;
+    border-radius:12px;
+    cursor:pointer;
+
+}
+
+
+/* TABLE */
+
+table{
+
+    width:100%;
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:#F8FAFC;
+
+}
+
+th{
+
+    padding:16px;
+    text-align:left;
+    color:#64748B;
+
+}
+
+td{
+
+    padding:18px 16px;
+    border-bottom:1px solid #E2E8F0;
+    color:#0F172A;
+
+}
+
+tbody tr{
+
+    transition:.2s;
+
+}
+
+tbody tr:hover{
+
+    background:#F8FAFC;
+
+}
+
+
+/* BADGE */
+
+.gender-badge{
+
+    background:#DBEAFE;
+    color:#2563EB;
+    padding:7px 14px;
+    border-radius:30px;
+    font-size:13px;
+    font-weight:600;
+
+}
+
+
+/* DELETE */
+
+.delete-btn{
+
+    background:#EF4444;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:.2s;
+
+}
+
+.delete-btn:hover{
+
+    background:#DC2626;
+
+}
+
+
+/* MESSAGES */
+
+.success-msg{
+
+    margin-top:20px;
+    background:#ECFDF5;
+    color:#10B981;
+    padding:14px;
+    border-radius:12px;
+
+}
+
+.error-msg{
+
+    margin-top:20px;
+    background:#FEF2F2;
+    color:#EF4444;
+    padding:14px;
+    border-radius:12px;
+
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:1100px){
+
+    .student-layout{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .table-header{
+
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+
+    }
+
+}
+
 </style>

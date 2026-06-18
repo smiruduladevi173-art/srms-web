@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import srms_web.model.Student;
+
+
 import srms_web.admin.AdminService;
 
 @Controller
@@ -350,4 +353,234 @@ return
 "redirect:/admin/subjects";
 
 }
+
+//=====================
+// STUDENTS PAGE
+//=====================
+
+@GetMapping(
+"/admin/students"
+)
+
+public String students(
+
+@RequestParam(
+required=false
+)
+String search,
+
+Model model
+
+){
+
+model.addAttribute(
+
+"activePage",
+
+"students"
+
+);
+
+model.addAttribute(
+
+"departments",
+
+adminService
+.getAllDepartments()
+
+);
+
+model.addAttribute(
+
+"students",
+
+adminService
+.getStudents(
+search
+)
+
+);
+
+model.addAttribute(
+
+"search",
+
+search
+
+);
+
+model.addAttribute(
+
+"view",
+
+"fragments/admin-students-content"
+
+);
+
+return
+"admin-dashboard";
+
+}
+
+//=====================
+// ADD STUDENT
+//=====================
+
+@PostMapping(
+"/admin/students/add"
+)
+
+public String addStudent(
+
+Student student,
+
+RedirectAttributes redirect
+
+){
+
+String result=
+
+adminService
+.addStudent(
+student
+);
+
+if(
+
+result.contains(
+"exists"
+)
+
+||
+
+result.equals(
+"Failed"
+)
+
+){
+
+redirect
+.addFlashAttribute(
+
+"error",
+
+result
+
+);
+
+}
+
+else{
+
+redirect
+.addFlashAttribute(
+
+"message",
+
+result
+
+);
+
+}
+
+return
+"redirect:/admin/students";
+
+}
+
+//=====================
+// SEARCH STUDENT
+//=====================
+
+@PostMapping(
+"/admin/students/search"
+)
+
+public String searchStudents(
+
+@RequestParam
+String search,
+
+RedirectAttributes redirect
+
+){
+
+redirect
+.addAttribute(
+
+"search",
+
+search
+
+);
+
+return
+"redirect:/admin/students";
+
+}
+
+//=====================
+// DELETE STUDENT
+//=====================
+
+@PostMapping(
+"/admin/students/delete"
+)
+
+public String deleteStudent(
+
+@RequestParam
+int studentId,
+
+RedirectAttributes redirect
+
+){
+
+boolean deleted=
+
+adminService
+.deleteStudent(
+studentId
+);
+
+if(
+deleted
+){
+
+redirect
+.addFlashAttribute(
+
+"message",
+
+"Student deleted successfully"
+
+);
+
+}
+
+else{
+
+redirect
+.addFlashAttribute(
+
+"error",
+
+"Delete failed"
+
+);
+
+}
+
+return
+"redirect:/admin/students";
+
+}
+
+
+
+
+
+
+
+
 }   
