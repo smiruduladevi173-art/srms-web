@@ -70,6 +70,8 @@ public List<StudentInfo> getAllStudents() {
         ResultSet rs =
                 pst.executeQuery();
 
+              
+
         while (
 
                 rs.next()
@@ -133,7 +135,14 @@ public List<StudentInfo> getAllStudents() {
 
         }
 
+       
+  {
+    con.close();
+}
+
     }
+
+    
 
     catch (
 
@@ -144,8 +153,14 @@ public List<StudentInfo> getAllStudents() {
         e.printStackTrace();
 
     }
+    
+    
+
+    
 
     return students;
+
+    
 
 }
 
@@ -223,7 +238,13 @@ pst.executeUpdate();
 
 }
 
+ {
+    con.close();
 }
+
+}
+
+
 
 catch(Exception e){
 
@@ -322,7 +343,9 @@ System.out.println(
 "Students Loaded = "
 + list.size()
 );
-
+ {
+    con.close();
+}
 }
 catch(Exception e){
 
@@ -443,7 +466,12 @@ list.size()
 
 );
 
+ {
+    con.close();
 }
+
+}
+
 
 catch(
 
@@ -503,6 +531,9 @@ public List<Department> getDepartments(){
             );
 
             list.add(d);
+             {
+    con.close();
+}
 
         }
 
@@ -617,6 +648,9 @@ pst.executeUpdate();
 }
 
 }
+ {
+    con.close();
+}
 
 }
 catch(Exception e){
@@ -700,6 +734,9 @@ public AnalyticsSummary getAnalyticsSummary(
                     rs.getDouble("pass_percentage")
             );
         }
+         {
+    con.close();
+}
 
     }
     catch(Exception e) {

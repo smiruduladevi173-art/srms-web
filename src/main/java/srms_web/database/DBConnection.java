@@ -22,7 +22,13 @@ try{
 return DriverManager.getConnection(
 "jdbc:sqlite:srms.db"
 );
-
+public static void close(Connection con) {
+    if (con != null) {
+        try {
+            con.close();
+        } catch (Exception ignored) {}
+    }
+}
 
 }
 

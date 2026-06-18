@@ -90,7 +90,9 @@ rs.getInt(
 departments.add(
 department
 );
-
+ {
+    con.close();
+}
 }
 
 }
@@ -130,6 +132,8 @@ DBConnection.getConnection();
 PreparedStatement ps=
 con.prepareStatement(sql)
 
+
+
 ){
 
 ps.setString(
@@ -142,6 +146,10 @@ ps.executeUpdate();
 System.out.println(
 "Department Added"
 );
+{
+    con.close();
+}
+
 
 }
 catch(Exception e){
@@ -149,6 +157,7 @@ catch(Exception e){
 e.printStackTrace();
 
 }
+ 
 
 }
 
@@ -247,6 +256,10 @@ id
 
 ps.executeUpdate();
 
+{
+    con.close();
+}
+
 }
 catch(Exception e){
 
@@ -335,6 +348,10 @@ subject
 );
 
 }
+{
+    con.close();
+}
+
 
 }
 
@@ -411,7 +428,14 @@ subjectName
 
 ps.executeUpdate();
 
+{
+    con.close();
 }
+
+
+}
+
+
 catch(Exception e){
 
 e.printStackTrace();
@@ -457,6 +481,11 @@ subjectId
 
 ps1.executeUpdate();
 
+{
+    con.close();
+}
+
+
 
 // DELETE SUBJECT
 
@@ -477,15 +506,24 @@ int deleted=
 ps2.executeUpdate();
 
 con.commit();
+{
+    con.close();
+}
+
 
 return deleted>0;
 
+
+
 }
+
+
 catch(Exception e){
 
 e.printStackTrace();
 
 }
+
 
 return false;
 
@@ -623,6 +661,10 @@ student
 
 }
 
+{
+    con.close();
+}
+
 }
 
 }
@@ -678,6 +720,11 @@ return rs.getInt(1)>0;
 
 }
 
+{
+    con.close();
+}
+
+
 }
 catch(Exception e){
 
@@ -729,6 +776,10 @@ if(rs.next()){
 return rs.getInt(1)>0;
 
 }
+ {
+    con.close();
+}
+
 
 }
 catch(Exception e){
@@ -736,6 +787,7 @@ catch(Exception e){
 e.printStackTrace();
 
 }
+
 
 return false;
 
@@ -864,6 +916,9 @@ ps1.executeUpdate();
 
 ResultSet userKey=
 ps1.getGeneratedKeys();
+ {
+    con.close();
+}
 
 int userId=0;
 
@@ -1006,6 +1061,9 @@ studentId
 
 ResultSet rs=
 ps.executeQuery();
+ {
+    con.close();
+}
 
 if(rs.next()){
 
@@ -1249,6 +1307,10 @@ getAnalyticsSummary(){
                 "SUMMARY GENERATED"
         );
 
+         {
+    con.close();
+}
+
     }
     catch(Exception e){
 
@@ -1310,8 +1372,12 @@ getTopStudents(){
 
             ResultSet rs =
                     ps.executeQuery()
+                    
 
-    ){
+    )
+    
+    
+    {
 
         while(rs.next()){
 
@@ -1347,6 +1413,10 @@ getTopStudents(){
             );
 
         }
+
+         {
+    con.close();
+}
 
     }
     catch(Exception e){
