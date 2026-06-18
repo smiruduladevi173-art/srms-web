@@ -1,689 +1,307 @@
+<div class="sm-page">
+
+  <div class="sm-header">
+    <h2 class="sm-title">Subjects</h2>
+    <p class="sm-subtitle">Select a department and semester to manage subjects</p>
+  </div>
+
+  <div th:if="${message}" id="messageBox" class="sm-toast sm-toast--success">
+    <i class="ti ti-circle-check"></i>
+    <span th:text="${message}">Subject saved</span>
+  </div>
+
+  <div th:if="${error}" id="errorBox" class="sm-toast sm-toast--error">
+    <i class="ti ti-alert-circle"></i>
+    <span th:text="${error}">Something went wrong</span>
+  </div>
+
+  <!-- FILTER -->
+  <form th:action="@{/admin/subjects/filter}" method="post" class="sm-filters">
+
+    <div class="sm-field-group">
+      <label class="sm-label"><i class="ti ti-building"></i> Department</label>
+      <select name="departmentId" class="sm-select" required>
+        <option value="">Select department</option>
+        <option th:each="department : ${departments}"
+                th:value="${department.id}"
+                th:text="${department.departmentName}"></option>
+      </select>
+    </div>
+
+    <div class="sm-field-group">
+      <label class="sm-label"><i class="ti ti-calendar"></i> Semester</label>
+      <select name="semester" class="sm-select" required>
+        <option value="1">Semester 1</option>
+        <option value="2">Semester 2</option>
+        <option value="3">Semester 3</option>
+        <option value="4">Semester 4</option>
+        <option value="5">Semester 5</option>
+        <option value="6">Semester 6</option>
+        <option value="7">Semester 7</option>
+        <option value="8">Semester 8</option>
+      </select>
+    </div>
+
+    <button type="submit" class="sm-btn sm-btn--primary">
+      <i class="ti ti-filter"></i> Load
+    </button>
+
+  </form>
+
+  <!-- ADD -->
+  <form th:action="@{/admin/subjects/add}" method="post" class="sm-add-form">
+
+    <input type="hidden" name="departmentId" th:value="${param.departmentId}">
+    <input type="hidden" name="semester" th:value="${param.semester}">
+
+    <div class="sm-field-group sm-field-group--grow">
+      <label class="sm-label"><i class="ti ti-plus"></i> New subject</label>
+      <input name="subjectName" class="sm-input" placeholder="Enter subject name" required>
+    </div>
+
+    <button type="submit" class="sm-btn sm-btn--dark">
+      <i class="ti ti-check"></i> Save
+    </button>
+
+  </form>
+
+  <!-- TABLE -->
+  <div class="sm-table-wrap">
+    <table class="sm-table">
+      <thead>
+        <tr><th>Subjects</th></tr>
+      </thead>
+
+      <tbody th:if="${subjects != null and !subjects.isEmpty()}">
+        <tr th:each="subject : ${subjects}"
+            th:data-id="${subject.id}"
+            ondblclick="selectSubject(this)">
+          <td th:text="${subject.subjectName}">Subject name</td>
+        </tr>
+      </tbody>
+
+      <tbody th:if="${subjects == null or subjects.isEmpty()}">
+        <tr>
+          <td>
+            <div class="sm-empty">
+              <i class="ti ti-book-off"></i>
+              <p style="font-weight:600; color:#0F172A;">No subjects added yet</p>
+              <p>Choose filters and create your first subject</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="sm-hint" th:if="${subjects != null and !subjects.isEmpty()}">
+    Double-click a subject to select it for deletion.
+  </p>
+
+  <!-- DELETE -->
+  <form id="deleteForm" th:action="@{/admin/subjects/delete}" method="post" class="sm-delete-form">
+
+    <input id="subjectId" name="subjectId" type="hidden">
+    <input type="hidden" name="departmentId" th:value="${param.departmentId}">
+    <input type="hidden" name="semester" th:value="${param.semester}">
+
+    <button id="deleteBtn" type="submit" class="sm-btn sm-btn--danger">
+      <i class="ti ti-trash"></i> Delete subject
+    </button>
+
+  </form>
+
+</div>
+
 <style>
-
-/* ==========================
-MAIN CARD
-========================== */
-
-.admin-card{
-
-background:#FFFFFF;
-
-padding:32px;
-
-border-radius:20px;
-
-}
-
-
-/* ==========================
-HEADER
-========================== */
-
-.header{
-
-margin-bottom:28px;
-
-}
-
-.header h2{
-
-font-size:28px;
-
-font-weight:700;
-
-color:#0F172A;
-
-margin-bottom:6px;
-
-}
-
-.header p{
-
-color:#64748B;
-
-}
-
-
-/* ==========================
-MESSAGES
-========================== */
-
-.message{
-
-padding:16px 18px;
-
-border-radius:14px;
-
-margin-bottom:20px;
-
-font-size:14px;
-
-font-weight:600;
-
-animation:fade .25s ease;
-
-}
-
-.success-message{
-
-background:#DCFCE7;
-
-border:1px solid #86EFAC;
-
-color:#166534;
-
-}
-
-.error-message{
-
-background:#FEE2E2;
-
-border:1px solid #FCA5A5;
-
-color:#991B1B;
-
-}
-
-
-@keyframes fade{
-
-from{
-
-opacity:0;
-
-transform:
-translateY(-8px);
-
-}
-
-to{
-
-opacity:1;
-
-}
-
-}
-
-
-/* ==========================
-TOP SECTION
-========================== */
-
-.section{
-
-display:grid;
-
-grid-template-columns:
-1fr
-180px
-auto;
-
-gap:16px;
-
-margin-bottom:20px;
-
-}
-
-
-select,
-input{
-
-width:100%;
-
-padding:14px 16px;
-
-border:1px solid #CBD5E1;
-
-border-radius:14px;
-
-background:#F8FAFC;
-
-font-size:14px;
-
-outline:none;
-
-transition:.2s;
-
-}
-
-select:focus,
-input:focus{
-
-border-color:#2563EB;
-
-box-shadow:
-0 0 0 4px rgba(37,99,235,.12);
-
-}
-
-
-/* ==========================
-BUTTONS
-========================== */
-
-button{
-
-border:none;
-
-padding:14px 22px;
-
-border-radius:14px;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.load-btn{
-
-background:#2563EB;
-
-color:white;
-
-}
-
-.load-btn:hover{
-
-background:#1D4ED8;
-
-}
-
-.save-btn{
-
-background:#10B981;
-
-color:white;
-
-}
-
-.save-btn:hover{
-
-background:#059669;
-
-}
-
-.delete-btn{
-
-display:none;
-
-margin-left:auto;
-
-margin-top:18px;
-
-background:#DC2626;
-
-color:white;
-
-}
-
-.delete-btn:hover{
-
-background:#B91C1C;
-
-}
-
-
-/* ==========================
-TABLE
-========================== */
-
-.table-box{
-
-margin-top:20px;
-
-overflow:hidden;
-
-border-radius:18px;
-
-border:1px solid #E2E8F0;
-
-}
-
-
-.subject-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-
-.subject-table th{
-
-background:#0F172A;
-
-color:white;
-
-padding:18px;
-
-text-align:left;
-
-font-size:14px;
-
-}
-
-
-.subject-table td{
-
-padding:18px;
-
-border-bottom:1px solid #E2E8F0;
-
-}
-
-
-.subject-table tr{
-
-transition:.2s;
-
-cursor:pointer;
-
-}
-
-
-.subject-table tr:hover{
-
-background:#EFF6FF;
-
-}
-
-
-.subject-table tr.selected{
-
-background:#DBEAFE;
-
-}
-
-
-.subject-table tr.selected td{
-
-color:#1D4ED8;
-
-font-weight:600;
-
-}
-
-
-/* ==========================
-EMPTY
-========================== */
-
-.empty{
-
-padding:60px;
-
-text-align:center;
-
-color:#94A3B8;
-
-font-size:15px;
-
-}
-
-.empty h3{
-
-color:#334155;
-
-margin-bottom:8px;
-
-}
-
+  .sm-page {
+    --sm-text: #0F172A;
+    --sm-muted: #64748B;
+    --sm-faint: #94A3B8;
+    --sm-border: #E2E8F0;
+    --sm-surface: #F8FAFC;
+    --sm-accent: #6D28D9;
+    --sm-accent-soft: #EDE9FE;
+    --sm-danger: #B91C1C;
+    --sm-success: #166534;
+    --sm-success-soft: #DCFCE7;
+    --sm-success-border: #86EFAC;
+    --sm-error: #991B1B;
+    --sm-error-soft: #FEE2E2;
+    --sm-error-border: #FCA5A5;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--sm-text);
+  }
+
+  .sm-header { margin-bottom: 20px; }
+  .sm-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .sm-subtitle { font-size: 13px; color: var(--sm-muted); }
+
+  /* Toasts */
+  .sm-toast {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    animation: smFade .2s ease;
+  }
+
+  .sm-toast i { font-size: 16px; }
+  .sm-toast--success { background: var(--sm-success-soft); border: 1px solid var(--sm-success-border); color: var(--sm-success); }
+  .sm-toast--error { background: var(--sm-error-soft); border: 1px solid var(--sm-error-border); color: var(--sm-error); }
+
+  @keyframes smFade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Filters + add form share the same field styling */
+  .sm-filters, .sm-add-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .sm-field-group { display: flex; flex-direction: column; gap: 6px; }
+  .sm-field-group--grow { flex: 1; min-width: 220px; }
+
+  .sm-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sm-muted);
+  }
+
+  .sm-label i { font-size: 14px; color: var(--sm-faint); }
+
+  .sm-select, .sm-input {
+    min-width: 200px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--sm-text);
+    background: #fff;
+    border: 1px solid var(--sm-border);
+    border-radius: 10px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .sm-input { width: 100%; min-width: 0; }
+
+  .sm-select:hover, .sm-input:hover { border-color: #CBD5E1; }
+
+  .sm-select:focus, .sm-input:focus {
+    outline: none;
+    border-color: var(--sm-accent);
+    box-shadow: 0 0 0 3px rgba(109,40,217,.12);
+  }
+
+  /* Buttons */
+  .sm-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .sm-btn i { font-size: 15px; }
+  .sm-btn:focus-visible { outline: 2px solid var(--sm-accent); outline-offset: 2px; }
+
+  .sm-btn--primary { background: var(--sm-accent); color: #fff; }
+  .sm-btn--primary:hover { background: #5B21B6; }
+
+  .sm-btn--dark { background: var(--sm-text); color: #fff; }
+  .sm-btn--dark:hover { background: #1E293B; }
+
+  .sm-btn--danger { display: none; background: var(--sm-danger); color: #fff; }
+  .sm-btn--danger:hover { background: #991B1B; }
+
+  /* Table */
+  .sm-table-wrap {
+    border: 1px solid var(--sm-border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .sm-table { width: 100%; border-collapse: collapse; }
+
+  .sm-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--sm-muted);
+    background: var(--sm-surface);
+    border-bottom: 1px solid var(--sm-border);
+  }
+
+  .sm-table tbody td {
+    padding: 13px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--sm-surface);
+  }
+
+  .sm-table tbody tr:last-child td { border-bottom: none; }
+  .sm-table tbody tr { cursor: pointer; transition: background .15s; }
+  .sm-table tbody tr:hover { background: #FAFBFD; }
+  .sm-table tbody tr.selected { background: var(--sm-accent-soft); }
+  .sm-table tbody tr.selected td { color: var(--sm-accent); font-weight: 600; }
+
+  /* Empty state */
+  .sm-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 48px 0;
+    color: var(--sm-muted);
+  }
+
+  .sm-empty i { font-size: 28px; color: var(--sm-faint); }
+  .sm-empty p { font-size: 13px; margin: 0; }
+
+  .sm-hint { font-size: 12px; color: var(--sm-faint); margin-top: 10px; }
+
+  .sm-delete-form { display: flex; justify-content: flex-end; margin-top: 14px; }
+
+  @media (max-width: 720px) {
+    .sm-filters, .sm-add-form { flex-direction: column; align-items: stretch; }
+    .sm-select, .sm-field-group--grow { min-width: 100%; }
+  }
 </style>
 
-
-
-<div class="admin-card">
-
-<div class="header">
-
-<h2>
-Subject Management
-</h2>
-
-<p>
-Select department and semester to manage subjects
-</p>
-
-</div>
-
-
-
-<!-- MESSAGE -->
-
-<div
-th:if="${message}"
-id="messageBox"
-class="message success-message">
-
-<span
-th:text="${message}">
-</span>
-
-</div>
-
-
-<div
-th:if="${error}"
-id="errorBox"
-class="message error-message">
-
-<span
-th:text="${error}">
-</span>
-
-</div>
-
-
-
-<!-- FILTER -->
-
-<form
-th:action="@{/admin/subjects/filter}"
-method="post">
-
-<div class="section">
-
-<select
-name="departmentId"
-required>
-
-<option value="">
-Select Department
-</option>
-
-<option
-
-th:each=
-"department:${departments}"
-
-th:value=
-"${department.id}"
-
-th:text=
-"${department.departmentName}">
-
-</option>
-
-</select>
-
-
-
-<select
-name="semester"
-required>
-
-<option value="1">Semester 1</option>
-<option value="2">Semester 2</option>
-<option value="3">Semester 3</option>
-<option value="4">Semester 4</option>
-<option value="5">Semester 5</option>
-<option value="6">Semester 6</option>
-<option value="7">Semester 7</option>
-<option value="8">Semester 8</option>
-
-</select>
-
-
-<button
-class="load-btn">
-
-Load
-
-</button>
-
-</div>
-
-</form>
-
-
-
-<!-- ADD -->
-
-<form
-th:action="@{/admin/subjects/add}"
-method="post">
-
-<input
-type="hidden"
-name="departmentId"
-th:value="${param.departmentId}">
-
-<input
-type="hidden"
-name="semester"
-th:value="${param.semester}">
-
-
-<div class="section">
-
-<input
-
-name="subjectName"
-
-placeholder=
-"Enter Subject Name"
-
-required>
-
-
-<button
-class="save-btn">
-
-Save
-
-</button>
-
-</div>
-
-</form>
-
-
-
-<!-- TABLE -->
-
-<div class="table-box">
-
-<table class="subject-table">
-
-<thead>
-
-<tr>
-
-<th>
-Subjects
-</th>
-
-</tr>
-
-</thead>
-
-
-<tbody
-th:if="${subjects!=null and !subjects.isEmpty()}">
-
-<tr
-
-th:each=
-"subject:${subjects}"
-
-th:data-id=
-"${subject.id}"
-
-ondblclick=
-"selectSubject(this)"
-
->
-
-<td
-th:text=
-"${subject.subjectName}">
-</td>
-
-</tr>
-
-</tbody>
-
-
-
-<tbody
-th:if="${subjects==null or subjects.isEmpty()}">
-
-<tr>
-
-<td class="empty">
-
-<h3>
-No subjects added yet
-</h3>
-
-Choose filters and create your first subject
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-
-
-<!-- DELETE -->
-
-<form
-
-id="deleteForm"
-
-th:action=
-"@{/admin/subjects/delete}"
-
-method="post">
-
-<input
-id="subjectId"
-name="subjectId"
-type="hidden">
-
-<input
-type="hidden"
-name="departmentId"
-th:value="${param.departmentId}">
-
-<input
-type="hidden"
-name="semester"
-th:value="${param.semester}">
-
-
-<button
-
-id="deleteBtn"
-
-class="delete-btn">
-
-Delete Subject
-
-</button>
-
-</form>
-
-</div>
-
-
-
 <script>
+  function selectSubject(row) {
+    document.querySelectorAll('.sm-table tr').forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+    document.getElementById('subjectId').value = row.dataset.id;
+    document.getElementById('deleteBtn').style.display = 'inline-flex';
+  }
 
-function selectSubject(
-row
-){
+  document.getElementById('deleteForm')?.addEventListener('submit', function (e) {
+    const ok = confirm('Students are assigned to this subject.\n\nRelated marks will also be removed.\n\nProceed?');
+    if (!ok) e.preventDefault();
+  });
 
-document
-.querySelectorAll(
-".subject-table tr"
-)
-
-.forEach(
-
-r=>
-r.classList.remove(
-"selected"
-)
-
-);
-
-row.classList.add(
-"selected"
-);
-
-document
-.getElementById(
-"subjectId"
-)
-.value=
-row.dataset.id;
-
-document
-.getElementById(
-"deleteBtn"
-)
-.style.display=
-"block";
-
-}
-
-
-
-document
-.getElementById(
-"deleteForm"
-)
-
-?.addEventListener(
-
-"submit",
-
-function(e){
-
-const ok=
-
-confirm(
-
-"Students are assigned to this subject.\n\nRelated marks will also be removed.\n\nProceed?"
-
-);
-
-if(!ok){
-
-e.preventDefault();
-
-}
-
-}
-
-);
-
-
-
-setTimeout(()=>{
-
-document
-.getElementById(
-"messageBox"
-)
-?.remove();
-
-document
-.getElementById(
-"errorBox"
-)
-?.remove();
-
-},4000);
-
+  setTimeout(() => {
+    document.getElementById('messageBox')?.remove();
+    document.getElementById('errorBox')?.remove();
+  }, 4000);
 </script>

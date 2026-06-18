@@ -1,388 +1,306 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>SRMS Dashboard</title>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Segoe UI",sans-serif;
-}
-
-body{
-background:#F8FAFC;
-overflow:hidden;
-}
-
-/* =========================
-   MAIN LAYOUT
-========================= */
-
-.container{
-display:flex;
-height:100vh;
-}
-
-/* =========================
-   SIDEBAR
-========================= */
-
-.sidebar{
-
-width:280px;
-
-background:linear-gradient(
-180deg,
-#2563EB 0%,
-#1D4ED8 100%
-);
-
-padding:25px;
-
-display:flex;
-
-flex-direction:column;
-
-box-shadow:
-4px 0 20px rgba(0,0,0,.08);
-}
-
-/* =========================
-   LOGO
-========================= */
-
-.logo{
-
-text-align:center;
-
-margin-bottom:40px;
-}
-
-.logo h2{
-
-font-size:28px;
-
-font-weight:700;
-
-color:white;
-
-letter-spacing:.5px;
-}
-
-.logo p{
-
-color:rgba(255,255,255,.8);
-
-font-size:13px;
-
-margin-top:5px;
-}
-
-/* =========================
-   MENU
-========================= */
-
-.menu{
-
-display:flex;
-
-flex-direction:column;
-
-gap:10px;
-
-flex:1;
-}
-
-.sidebar a{
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-padding:15px 18px;
-
-border-radius:14px;
-
-text-decoration:none;
-
-font-size:15px;
-
-font-weight:600;
-
-color:rgba(255,255,255,.88);
-
-transition:
-all .25s ease;
-}
-
-/* Hover */
-
-.sidebar a:hover{
-
-background:
-rgba(255,255,255,.12);
-
-color:white;
-
-transform:
-translateX(4px);
-}
-
-/* Active */
-
-.sidebar a.active{
-
-background:white;
-
-color:#2563EB;
-
-box-shadow:
-0 10px 25px rgba(0,0,0,.12);
-
-position:relative;
-}
-
-.sidebar a.active::before{
-
-content:"";
-
-position:absolute;
-
-left:-25px;
-
-top:10px;
-
-bottom:10px;
-
-width:5px;
-
-background:white;
-
-border-radius:10px;
-}
-
-/* =========================
-   LOGOUT
-========================= */
-
-.logout{
-
-margin-top:auto;
-
-background:
-rgb(220, 38, 38);
-
-color:white !important;
-}
-
-.logout:hover{
-
-background:#DC2626;
-
-transform:none;
-}
-
-/* =========================
-   CONTENT
-========================= */
-
-.content{
-
-flex:1;
-
-padding:30px;
-
-overflow:auto;
-
-background:#F8FAFC;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.card{
-
-background:white;
-
-min-height:100%;
-
-padding:35px;
-
-border-radius:24px;
-
-border:1px solid #E2E8F0;
-
-box-shadow:
-0 12px 35px rgba(15,23,42,.06);
-
-animation:
-fadeIn .25s ease;
-}
-
-/* =========================
-   PAGE ANIMATION
-========================= */
-
-@keyframes fadeIn{
-
-from{
-
-opacity:0;
-
-transform:
-translateY(10px);
-
-}
-
-to{
-
-opacity:1;
-
-transform:
-translateY(0);
-
-}
-}
-
-/* =========================
-   SCROLLBAR
-========================= */
-
-::-webkit-scrollbar{
-width:8px;
-}
-
-::-webkit-scrollbar-thumb{
-
-background:#CBD5E1;
-
-border-radius:20px;
-}
-
-::-webkit-scrollbar-track{
-background:transparent;
-}
-
-</style>
-
+  <meta charset="UTF-8">
+  <title>SRMS Admin Panel</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #F1F5F9;
+      overflow: hidden;
+    }
+
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 240px;
+      background: #0F172A;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-logo {
+      padding: 0 8px;
+      margin-bottom: 32px;
+    }
+
+    .sidebar-logo-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .sidebar-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #6D28D9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 16px;
+    }
+
+    .sidebar-brand {
+      font-size: 14px;
+      font-weight: 500;
+      color: #fff;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: rgba(255,255,255,.08);
+      margin-top: 16px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,.3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0 10px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,.55);
+      transition: background .15s, color .15s;
+    }
+
+    .sidebar-nav a:hover {
+      background: rgba(255,255,255,.07);
+      color: #fff;
+    }
+
+    .sidebar-nav a.active {
+      background: rgba(255,255,255,.1);
+      color: #fff;
+    }
+
+    .sidebar-nav a.active i {
+      color: #C4B5FD;
+    }
+
+    .sidebar-nav a i { font-size: 17px; }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 16px;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255,255,255,.5);
+      transition: background .15s, color .15s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(220,38,38,.15);
+      color: #FCA5A5;
+    }
+
+    .logout-btn i { font-size: 16px; }
+
+    /* ── Main ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .topbar {
+      background: #fff;
+      border-bottom: 1px solid #E2E8F0;
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .topbar-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #0F172A;
+      margin: 0;
+    }
+
+    .topbar-sub {
+      font-size: 12px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    .badge-year {
+      background: #EDE9FE;
+      color: #6D28D9;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .content-scroll {
+      flex: 1;
+      overflow: auto;
+      padding: 24px 28px;
+    }
+
+    .content-card {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 32px;
+      min-height: calc(100% - 10px);
+      animation: fadeIn .2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      min-height: 300px;
+      color: #64748B;
+    }
+
+    .empty-icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #F1F5F9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #94A3B8;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 20px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="layout">
 
-<!-- =========================
-     SIDEBAR
-========================= -->
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-top">
+        <div class="sidebar-icon-box"><i class="ti ti-shield-lock"></i></div>
+        <span class="sidebar-brand">SRMS</span>
+      </div>
+      <div class="sidebar-divider"></div>
+    </div>
 
-<div class="sidebar">
+    <nav class="sidebar-nav">
+      <span class="nav-label">Menu</span>
 
-<div class="logo">
+      <a th:href="@{/admin}"
+         th:classappend="${activePage == 'departments' ? 'active' : ''}">
+        <i class="ti ti-building"></i> Departments
+      </a>
 
-<h2>ADMIN</h2>
+      <a th:href="@{/admin/subjects}"
+         th:classappend="${activePage == 'subjects' ? 'active' : ''}">
+        <i class="ti ti-book-2"></i> Subjects
+      </a>
 
-<p>DASHBOARD</p>
+      <a th:href="@{/admin/students}"
+         th:classappend="${activePage == 'students' ? 'active' : ''}">
+        <i class="ti ti-users"></i> Students
+      </a>
 
+      <a th:href="@{/admin/analytics}"
+         th:classappend="${activePage == 'analytics' ? 'active' : ''}">
+        <i class="ti ti-chart-bar"></i> Analytics
+      </a>
+    </nav>
 
-</div>
+    <div class="sidebar-footer">
+      <a class="logout-btn" th:href="@{/logout}">
+        <i class="ti ti-logout"></i> Sign out
+      </a>
+    </div>
+  </div>
 
-<div class="menu">
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 class="topbar-title"
+            th:text="${activePage != null ? #strings.capitalize(activePage) : 'Admin Panel'}">
+          Admin Panel
+        </h1>
+        <p class="topbar-sub">Manage departments, subjects &amp; records</p>
+      </div>
+      <span class="badge-year">2024–25</span>
+    </div>
 
+    <div class="content-scroll">
+      <div class="content-card">
 
+        <div th:if="${view != null}">
+          <div th:replace="~{${view}}"></div>
+        </div>
 
-<a
-th:href="@{/admin}"
-th:classappend="${activePage == 'departments'} ? 'active'">
+        <div th:if="${view == null}" class="empty-state">
+          <div class="empty-icon-box"><i class="ti ti-layout-dashboard"></i></div>
+          <p style="font-size:15px; font-weight:500; color:#0F172A; margin:0;">Select a section</p>
+          <p style="font-size:13px; margin:0;">Choose an option from the sidebar to get started</p>
+        </div>
 
-🏢 Departments
-
-</a>
-
-<a
-th:href="@{/admin/subjects}"
-th:classappend="${activePage == 'subjects'} ? 'active'">
-
-📚 Subjects
-
-</a>
-
-<a th:href="@{/admin/students}"
-   th:classappend="${activePage == 'students'} ? 'active'">
-   👨‍🎓 Students
-</a>
-
-<a th:href="@{/admin/analytics}"
-   th:classappend="${activePage == 'analytics'} ? 'active'">
-   📊 Analytics
-</a>
-
-</div>
-
-<a
-
-class="logout"
-
-th:href="@{/logout}">
-
-🚪 Logout
-
-</a>
-
-</div>
-
-<!-- =========================
-     CONTENT
-========================= -->
-
-<div class="content">
-
-<div class="card">
-
-<div
-
-th:if="${view!=null}"
-
-th:replace="~{${view}}">
+      </div>
+    </div>
+  </div>
 
 </div>
 
-<div th:if="${view==null}">
-
-<h2>
-
-Dashboard Loaded
-
-</h2>
-
-<p>
-
-Select an option from sidebar
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
-<script>
-console.log("Chart =", typeof Chart);
-</script>
-
 </body>
-
 </html>

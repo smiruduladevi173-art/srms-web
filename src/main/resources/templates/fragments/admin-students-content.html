@@ -1,454 +1,307 @@
-<div class="admin-card">
-
-<div class="student-layout">
-
-    <!-- LEFT -->
-    <div class="student-form">
-
-        <h2>🎓 Add Student</h2>
-
-        <form
-                th:action="@{/admin/students/add}"
-                method="post">
-
-            <input
-                    type="text"
-                    name="rollNumber"
-                    placeholder="Roll Number"
-                    required>
-
-            <input
-                    type="text"
-                    name="name"
-                    placeholder="Student Name"
-                    required>
-
-            <input
-                    type="date"
-                    name="dob"
-                    required>
-
-            <select
-                    name="departmentId"
-                    required>
-
-                <option value="">
-                    Select Department
-                </option>
-
-                <option
-                        th:each="dept:${departments}"
-                        th:value="${dept.id}"
-                        th:text="${dept.departmentName}">
-                </option>
-
-            </select>
-
-            <select
-                    name="gender"
-                    required>
-
-                <option value="">
-                    Select Gender
-                </option>
-
-                <option value="Female">
-                    Female
-                </option>
-
-                <option value="Male">
-                    Male
-                </option>
-
-            </select>
-
-            <input
-                    type="text"
-                    name="username"
-                    placeholder="Username"
-                    required>
-
-            <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    required>
-
-            <button type="submit">
-                Add Student
-            </button>
-
-        </form>
-
-        <div
-                th:if="${message}"
-                class="success-msg"
-                th:text="${message}">
-        </div>
-
-        <div
-                th:if="${error}"
-                class="error-msg"
-                th:text="${error}">
-        </div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="student-table">
-
-        <div class="table-header">
-
-            <h2>
-                Student Records
-            </h2>
-
-            <div class="search-bar">
-
-                <form
-                        th:action="@{/admin/students/search}"
-                        method="post">
-
-                    <input
-                            type="text"
-                            name="search"
-                            placeholder="Search Roll No / Name"
-                            th:value="${search}">
-
-                    <button>
-                        Search
-                    </button>
-
-                </form>
-
-            </div>
-
-        </div>
-
-        <table>
-
-            <thead>
-
-            <tr>
-
-                <th>Roll No</th>
-                <th>Name</th>
-                <th>DOB</th>
-                <th>Gender</th>
-                <th>Department</th>
-                <th>Action</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            <tr
-                    th:each="student:${students}">
-
-                <td th:text="${student.rollNumber}">
-                </td>
-
-                <td th:text="${student.name}">
-                </td>
-
-                <td th:text="${student.dob}">
-                </td>
-
-                <td>
-
-                    <span
-                            class="gender-badge"
-                            th:text="${student.gender}">
-                    </span>
-
-                </td>
-
-                <td th:text="${student.department}">
-                </td>
-
-                <td>
-
-                    <form
-                            th:action="@{/admin/students/delete}"
-                            method="post"
-                            onsubmit="return confirm('Delete student?')">
-
-                        <input
-                                type="hidden"
-                                name="studentId"
-                                th:value="${student.studentId}">
-
-                        <button class="delete-btn">
-
-                            Delete
-
-                        </button>
-
-                    </form>
-
-                </td>
-
-            </tr>
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-</div>
-
 <style>
-
-.student-layout{
-    display:grid;
-    grid-template-columns:370px 1fr;
-    gap:25px;
-}
-
-/* LEFT CARD */
-
-.student-form{
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 4px 20px rgba(0,0,0,.05);
-}
-
-.student-form h2{
-    margin-bottom:25px;
-    color:#0F172A;
-}
-
-.student-form form{
-    display:flex;
-    flex-direction:column;
-    gap:15px;
-}
-
-.student-form input,
-.student-form select{
-
-    padding:14px;
-    border:1px solid #CBD5E1;
-    border-radius:12px;
-    background:#F8FAFC;
-    transition:.2s;
-
-}
-
-.student-form input:focus,
-.student-form select:focus{
-
-    outline:none;
-    border-color:#2563EB;
-    background:white;
-
-}
-
-.student-form button{
-
-    background:#2563EB;
-    color:white;
-    border:none;
-    padding:14px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:15px;
-    font-weight:600;
-    transition:.2s;
-
-}
-
-.student-form button:hover{
-
-    background:#1D4ED8;
-
-}
-
-
-/* RIGHT CARD */
-
-.student-table{
-
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 4px 20px rgba(0,0,0,.05);
-
-}
-
-.table-header{
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-
-}
-
-.table-header h2{
-
-    color:#0F172A;
-
-}
-
-
-/* SEARCH */
-
-.search-bar form{
-
-    display:flex;
-    gap:12px;
-
-}
-
-.search-bar input{
-
-    width:280px;
-    padding:14px;
-    border:1px solid #CBD5E1;
-    border-radius:12px;
-    background:#F8FAFC;
-
-}
-
-.search-bar button{
-
-    background:#2563EB;
-    color:white;
-    border:none;
-    padding:14px 20px;
-    border-radius:12px;
-    cursor:pointer;
-
-}
-
-
-/* TABLE */
-
-table{
-
-    width:100%;
-    border-collapse:collapse;
-
-}
-
-thead{
-
-    background:#F8FAFC;
-
-}
-
-th{
-
-    padding:16px;
-    text-align:left;
-    color:#64748B;
-
-}
-
-td{
-
-    padding:18px 16px;
-    border-bottom:1px solid #E2E8F0;
-    color:#0F172A;
-
-}
-
-tbody tr{
-
-    transition:.2s;
-
-}
-
-tbody tr:hover{
-
-    background:#F8FAFC;
-
-}
-
-
-/* BADGE */
-
-.gender-badge{
-
-    background:#DBEAFE;
-    color:#2563EB;
-    padding:7px 14px;
-    border-radius:30px;
-    font-size:13px;
-    font-weight:600;
-
-}
-
-
-/* DELETE */
-
-.delete-btn{
-
-    background:#EF4444;
-    color:white;
-    border:none;
-    padding:10px 16px;
-    border-radius:10px;
-    cursor:pointer;
-    transition:.2s;
-
-}
-
-.delete-btn:hover{
-
-    background:#DC2626;
-
-}
-
-
-/* MESSAGES */
-
-.success-msg{
-
-    margin-top:20px;
-    background:#ECFDF5;
-    color:#10B981;
-    padding:14px;
-    border-radius:12px;
-
-}
-
-.error-msg{
-
-    margin-top:20px;
-    background:#FEF2F2;
-    color:#EF4444;
-    padding:14px;
-    border-radius:12px;
-
-}
-
-
-/* RESPONSIVE */
-
-@media(max-width:1100px){
-
-    .student-layout{
-
-        grid-template-columns:1fr;
-
-    }
-
-    .table-header{
-
-        flex-direction:column;
-        gap:20px;
-        align-items:flex-start;
-
-    }
-
-}
-
+  .sl { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
+
+  .card {
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary, #0F172A);
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title i { font-size: 18px; color: #6D28D9; }
+
+  .field-row { display: flex; flex-direction: column; gap: 4px; }
+
+  .field-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+
+  .field-label {
+    font-size: 12px;
+    color: var(--color-text-secondary, #64748B);
+  }
+
+  .fi {
+    width: 100%;
+    padding: 9px 12px;
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 8px;
+    background: var(--color-background-secondary, #F8FAFC);
+    font-size: 13px;
+    color: var(--color-text-primary, #0F172A);
+    transition: border-color .15s, background .15s;
+  }
+
+  .fi:focus {
+    outline: none;
+    border-color: #6D28D9;
+    background: var(--color-background-primary, #fff);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #6D28D9;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background .15s;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .btn-primary:hover { background: #5B21B6; }
+
+  .msg-ok {
+    margin-top: 12px;
+    background: #ECFDF5;
+    color: #065F46;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 0.5px solid #A7F3D0;
+  }
+
+  .msg-err {
+    margin-top: 12px;
+    background: #FEF2F2;
+    color: #991B1B;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 0.5px solid #FECACA;
+  }
+
+  .th-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 12px;
+  }
+
+  .search-wrap { display: flex; gap: 8px; }
+
+  .search-wrap input {
+    padding: 8px 12px;
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 8px;
+    background: var(--color-background-secondary, #F8FAFC);
+    font-size: 13px;
+    color: var(--color-text-primary, #0F172A);
+    width: 220px;
+  }
+
+  .search-wrap button {
+    padding: 8px 14px;
+    background: #6D28D9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .student-table-inner { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  .student-table-inner thead tr {
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+  }
+
+  .student-table-inner th {
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .student-table-inner td {
+    padding: 12px 10px;
+    color: var(--color-text-primary, #0F172A);
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+  }
+
+  .student-table-inner tbody tr:last-child td { border-bottom: none; }
+
+  .student-table-inner tbody tr:hover td {
+    background: var(--color-background-secondary, #F8FAFC);
+  }
+
+  .gender-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .gender-badge-male  { background: #EDE9FE; color: #5B21B6; }
+  .gender-badge-female{ background: #FCE7F3; color: #9D174D; }
+
+  .delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: #FEF2F2;
+    color: #991B1B;
+    border: 0.5px solid #FECACA;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .delete-btn:hover { background: #FEE2E2; }
+
+  @media (max-width: 1000px) {
+    .sl { grid-template-columns: 1fr; }
+    .th-row { flex-direction: column; align-items: flex-start; }
+  }
 </style>
+
+<div class="sl">
+
+  <!-- LEFT: Add Student Form -->
+  <div class="card">
+    <p class="card-title">
+      <i class="ti ti-user-plus" aria-hidden="true"></i> Add student
+    </p>
+
+    <form th:action="@{/admin/students/add}" method="post">
+      <div class="field-group">
+
+        <div class="field-row">
+          <span class="field-label">Roll number</span>
+          <input class="fi" type="text" name="rollNumber" placeholder="e.g. CS2024001" required>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Full name</span>
+          <input class="fi" type="text" name="name" placeholder="Student name" required>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Date of birth</span>
+          <input class="fi" type="date" name="dob" required>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Department</span>
+          <select class="fi" name="departmentId" required>
+            <option value="">Select department</option>
+            <option
+              th:each="dept : ${departments}"
+              th:value="${dept.id}"
+              th:text="${dept.departmentName}">
+            </option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Gender</span>
+          <select class="fi" name="gender" required>
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Username</span>
+          <input class="fi" type="text" name="username" placeholder="Login username" required>
+        </div>
+
+        <div class="field-row">
+          <span class="field-label">Password</span>
+          <input class="fi" type="password" name="password" placeholder="••••••••" required>
+        </div>
+
+      </div>
+
+      <button class="btn-primary" type="submit">
+        <i class="ti ti-plus" aria-hidden="true"></i> Add student
+      </button>
+    </form>
+
+    <div th:if="${message}" class="msg-ok"  th:text="${message}"></div>
+    <div th:if="${error}"   class="msg-err" th:text="${error}"></div>
+  </div>
+
+  <!-- RIGHT: Student Table -->
+  <div class="card">
+    <div class="th-row">
+      <p class="card-title" style="margin: 0;">
+        <i class="ti ti-users" aria-hidden="true"></i> Student records
+      </p>
+      <div class="search-wrap">
+        <form th:action="@{/admin/students/search}" method="post" style="display:flex;gap:8px;">
+          <input type="text" name="search" placeholder="Roll no / name" th:value="${search}">
+          <button type="submit">
+            <i class="ti ti-search" aria-hidden="true"></i> Search
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <table class="student-table-inner">
+      <thead>
+        <tr>
+          <th>Roll no</th>
+          <th>Name</th>
+          <th>DOB</th>
+          <th>Gender</th>
+          <th>Department</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="student : ${students}">
+          <td th:text="${student.rollNumber}"></td>
+          <td th:text="${student.name}"></td>
+          <td th:text="${student.dob}"></td>
+          <td>
+            <span class="gender-badge"
+              th:classappend="${student.gender == 'Male'} ? 'gender-badge-male' : 'gender-badge-female'"
+              th:text="${student.gender}">
+            </span>
+          </td>
+          <td th:text="${student.department}"></td>
+          <td>
+            <form
+              th:action="@{/admin/students/delete}"
+              method="post"
+              onsubmit="return confirm('Delete this student?')">
+              <input type="hidden" name="studentId" th:value="${student.studentId}">
+              <button class="delete-btn" type="submit">
+                <i class="ti ti-trash" aria-hidden="true"></i> Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

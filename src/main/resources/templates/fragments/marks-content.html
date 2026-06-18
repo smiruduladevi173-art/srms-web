@@ -1,293 +1,197 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-
-<meta charset="UTF-8">
-
-<title>My Academic Marks</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
-}
-
-body{
-    background:#F8FAFC;
-}
-
-/* =========================
-   MAIN CARD
-========================= */
-
-.marks-card{
-
-    background:white;
-
-    border:1px solid #DCE1E6;
-
-    border-radius:18px;
-
-    padding:28px;
-
-    box-shadow:
-    0 4px 16px rgba(0,0,0,.06);
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.marks-title{
-
-    font-size:28px;
-
-    font-weight:700;
-
-    color:#0F172A;
-
-    margin-bottom:6px;
-}
-
-.marks-subtitle{
-
-    font-size:14px;
-
-    color:#64748B;
-
-    margin-bottom:25px;
-}
-
-/* =========================
-   TABLE
-========================= */
-
-.table-wrapper{
-
-    overflow-x:auto;
-
-    border:1px solid #E2E8F0;
-
-    border-radius:14px;
-
-    overflow:hidden;
-}
-
-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-}
-
-thead{
-
-    background:#2563EB;
-
-    color:white;
-}
-
-th{
-
-    padding:16px;
-
-    text-align:left;
-
-    font-size:14px;
-
-    font-weight:700;
-}
-
-td{
-
-    padding:16px;
-
-    border-bottom:1px solid #EAECEF;
-
-    font-size:14px;
-}
-
-tbody tr{
-
-    transition:.2s ease;
-}
-
-tbody tr:hover{
-
-    background:#EFF6FF;
-}
-
-/* =========================
-   SEMESTER PILL
-========================= */
-
-.sem-pill{
-
-    display:inline-block;
-
-    padding:5px 12px;
-
-    border-radius:999px;
-
-    background:#EFF6FF;
-
-    color:#2563EB;
-
-    font-weight:600;
-
-    font-size:12px;
-}
-
-/* =========================
-   MARKS BADGE
-========================= */
-
-.marks-badge{
-
-    display:inline-block;
-
-    min-width:55px;
-
-    text-align:center;
-
-    padding:6px 10px;
-
-    border-radius:8px;
-
-    background:#F8FAFC;
-
-    color:#0F172A;
-
-    font-weight:700;
-}
-
-/* =========================
-   STATUS
-========================= */
-
-.status{
-
-    text-align:center;
-
-    margin-top:18px;
-
-    font-size:14px;
-
-    color:#10B981;
-
-    font-weight:600;
-}
-
-.no-data{
-
-    text-align:center;
-
-    padding:25px;
-
-    color:#EF4444;
-
-    font-weight:600;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:768px){
-
-    .marks-title{
-        font-size:24px;
+  <meta charset="UTF-8">
+  <title>My Academic Marks</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #F1F5F9;
     }
 
-}
+    .marks-card {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
 
-</style>
+    /* Header */
+    .marks-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid #E2E8F0;
+    }
 
+    .marks-title {
+      font-size: 17px;
+      font-weight: 500;
+      color: #0F172A;
+      margin: 0 0 3px;
+    }
+
+    .marks-subtitle {
+      font-size: 13px;
+      color: #64748B;
+      margin: 0;
+    }
+
+    /* Table */
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: #F8FAFC;
+    }
+
+    th {
+      padding: 11px 28px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 500;
+      color: #64748B;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    th.align-right { text-align: right; }
+
+    td {
+      padding: 14px 28px;
+      font-size: 14px;
+      color: #0F172A;
+      border-bottom: 1px solid #F1F5F9;
+    }
+
+    td.sem-cell { padding: 14px 16px; }
+    td.marks-cell { padding: 14px 28px; text-align: right; }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* Semester pill */
+    .sem-pill {
+      background: #E6F1FB;
+      color: #185FA5;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 3px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    /* Marks value — color set inline via Thymeleaf */
+    .marks-val {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .marks-pass { color: #1D9E75; }
+    .marks-fail { color: #BA7517; }
+
+    /* No data */
+    .no-data {
+      padding: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #94A3B8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .no-data i { font-size: 28px; }
+
+    /* Footer legend */
+    .marks-footer {
+      padding: 12px 28px;
+      background: #F8FAFC;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: #64748B;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .dot-pass { background: #1D9E75; }
+    .dot-fail { background: #BA7517; }
+  </style>
 </head>
-
 <body>
 
 <div class="marks-card">
 
-    <!-- HEADER -->
+  <!-- Header -->
+  <div class="marks-header">
+    <h2 class="marks-title">Academic Marks</h2>
+    <p class="marks-subtitle">Semester-wise performance overview</p>
+  </div>
 
-    <div class="marks-title">
-        📚 My Academic Marks
+  <!-- Table -->
+  <div class="table-wrapper">
+
+    <table th:if="${!#lists.isEmpty(marksList)}">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th style="padding-left:16px;">Semester</th>
+          <th class="align-right">Marks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="mark : ${marksList}">
+          <td th:text="${mark.subject}">Subject</td>
+          <td class="sem-cell">
+            <span class="sem-pill" th:text="'Semester ' + ${mark.semester}"></span>
+          </td>
+          <td class="marks-cell">
+            <span class="marks-val"
+                  th:classappend="${mark.marks >= 35} ? ' marks-pass' : ' marks-fail'"
+                  th:text="${mark.marks}">
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="no-data" th:if="${#lists.isEmpty(marksList)}">
+      <i class="ti ti-inbox"></i>
+      No marks available yet
     </div>
 
-    <div class="marks-subtitle">
-        Semester-wise Performance Overview
+  </div>
+
+  <!-- Footer legend -->
+  <div class="marks-footer">
+    <div class="legend-item">
+      <span class="dot dot-pass"></span> Pass (&ge;35)
     </div>
-
-    <!-- TABLE -->
-
-    <div class="table-wrapper">
-
-        <table th:if="${!#lists.isEmpty(marksList)}">
-
-            <thead>
-
-            <tr>
-
-                <th>Subject</th>
-
-                <th>Semester</th>
-
-                <th>Marks</th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            <tr th:each="mark : ${marksList}">
-
-                <td th:text="${mark.subject}">
-                    Subject
-                </td>
-
-                <td>
-
-                    <span
-                        class="sem-pill"
-                        th:text="'Semester ' + ${mark.semester}">
-                    </span>
-
-                </td>
-
-                <td>
-
-                    <span
-                        class="marks-badge"
-                        th:text="${mark.marks}">
-                    </span>
-
-                </td>
-
-            </tr>
-
-            </tbody>
-
-        </table>
-
-        <div
-            class="no-data"
-            th:if="${#lists.isEmpty(marksList)}">
-
-            No Marks Available
-
-        </div>
-
+    <div class="legend-item">
+      <span class="dot dot-fail"></span> Fail (&lt;35)
     </div>
-
-    <!-- STATUS -->
-
-    
+  </div>
 
 </div>
 

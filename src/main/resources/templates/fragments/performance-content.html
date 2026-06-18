@@ -1,405 +1,212 @@
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
 <head>
-<meta charset="UTF-8">
-<title>Performance Dashboard</title>
-
-<style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Segoe UI',sans-serif;
-}
-
-body{
-    background:#F8FAFC;
-}
-
-/* =========================
-   MAIN WRAPPER
-========================= */
-
-.performance-wrapper{
-    display:flex;
-    justify-content:center;
-    padding:40px;
-}
-
-/* =========================
-   DASHBOARD CARD
-========================= */
-
-.performance-card{
-
-    width:850px;
-
-    background:white;
-
-    border-radius:20px;
-
-    padding:40px;
-
-    border:1px solid #E2E8F0;
-
-    box-shadow:
-    0 8px 24px rgba(15,23,42,.06);
-
-    animation:fadeIn .5s ease;
-}
-
-/* =========================
-   HEADER
-========================= */
-
-.header{
-    text-align:center;
-}
-
-.icon{
-
-    font-size:60px;
-
-    margin-bottom:12px;
-}
-
-.title{
-
-    font-size:30px;
-
-    font-weight:700;
-
-    color:#0F172A;
-}
-
-.subtitle{
-
-    margin-top:10px;
-
-    color:#64748B;
-
-    font-size:15px;
-}
-
-/* =========================
-   GRID
-========================= */
-
-.stats-grid{
-
-    display:grid;
-
-    grid-template-columns:repeat(2,1fr);
-
-    gap:22px;
-
-    margin-top:40px;
-}
-
-/* =========================
-   METRIC CARD
-========================= */
-
-.metric-card{
-
-    background:white;
-
-    border:1px solid #E2E8F0;
-
-    border-radius:18px;
-
-    padding:30px;
-
-    text-align:center;
-
-    transition:.3s;
-}
-
-.metric-card:hover{
-
-    transform:translateY(-6px);
-
-    box-shadow:
-    0 10px 25px rgba(37,99,235,.12);
-
-    border-color:#BFDBFE;
-}
-
-.metric-icon{
-
-    font-size:32px;
-
-    margin-bottom:15px;
-}
-
-.metric-value{
-
-    font-size:34px;
-
-    font-weight:700;
-
-    color:#2563EB;
-
-    margin-bottom:10px;
-}
-
-.metric-label{
-
-    font-size:15px;
-
-    font-weight:600;
-
-    color:#475569;
-}
-
-/* =========================
-   PERFORMANCE CARD COLORS
-========================= */
-
-.performance-status{
-
-    color:#10B981;
-}
-
-/* =========================
-   STANDING SECTION
-========================= */
-
-.standing-box{
-
-    margin-top:35px;
-
-    background:#F8FAFC;
-
-    border:1px solid #E2E8F0;
-
-    border-radius:16px;
-
-    padding:24px;
-
-    text-align:center;
-}
-
-.standing-title{
-
-    font-size:15px;
-
-    font-weight:600;
-
-    color:#64748B;
-
-    margin-bottom:10px;
-}
-
-.standing-status{
-
-    font-size:24px;
-
-    font-weight:700;
-
-    color:#10B981;
-}
-
-/* =========================
-   STATUS BAR
-========================= */
-
-.status{
-
-    margin-top:25px;
-
-    text-align:center;
-
-    font-size:14px;
-
-    font-weight:600;
-
-    color:#10B981;
-}
-
-/* =========================
-   ANIMATION
-========================= */
-
-@keyframes fadeIn{
-
-    from{
-        opacity:0;
-        transform:translateY(20px);
+  <meta charset="UTF-8">
+  <title>Performance Dashboard</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #F1F5F9;
     }
 
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media(max-width:768px){
-
-    .stats-grid{
-        grid-template-columns:1fr;
+    .performance-wrapper {
+      padding: 28px;
+      display: flex;
+      justify-content: center;
     }
 
-    .performance-card{
-        width:100%;
+    .performance-card {
+      width: 100%;
+      max-width: 700px;
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 16px;
+      overflow: hidden;
+      animation: fadeIn .2s ease;
     }
-}
 
-</style>
+    /* Header */
+    .perf-header {
+      background: #0F172A;
+      padding: 28px 32px;
+      position: relative;
+    }
 
+    .perf-header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #185FA5, #1D9E75);
+    }
+
+    .perf-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,255,255,.4);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin: 0 0 4px;
+    }
+
+    .perf-title {
+      font-size: 20px;
+      font-weight: 500;
+      color: #fff;
+      margin: 0;
+    }
+
+    /* Metric grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: #E2E8F0;
+      border-bottom: 1px solid #E2E8F0;
+    }
+
+    .metric-cell {
+      background: #fff;
+      padding: 24px 28px;
+    }
+
+    .metric-key {
+      font-size: 12px;
+      color: #64748B;
+      margin: 0 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .metric-key i { font-size: 14px; }
+
+    .metric-val {
+      font-size: 28px;
+      font-weight: 500;
+      color: #185FA5;
+      margin: 0;
+    }
+
+    .metric-val.green { color: #1D9E75; }
+
+    /* Standing */
+    .standing-row {
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .standing-label {
+      font-size: 12px;
+      color: #64748B;
+      margin: 0 0 3px;
+    }
+
+    .standing-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #0F172A;
+      margin: 0;
+    }
+
+    .standing-badge {
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .badge-excellent { background: #E1F5EE; color: #0F6E56; }
+    .badge-good      { background: #E1F5EE; color: #0F6E56; }
+    .badge-average   { background: #E6F1FB; color: #0C447C; }
+    .badge-poor      { background: #FCEBEB; color: #791F1F; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 540px) {
+      .metrics-grid { grid-template-columns: 1fr; }
+      .performance-wrapper { padding: 16px; }
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="performance-wrapper">
+  <div class="performance-card">
 
-<div class="performance-card">
+    <!-- Header -->
+    <div class="perf-header">
+      <p class="perf-label">Academic Analytics</p>
+      <h2 class="perf-title">Performance Overview</h2>
+    </div>
 
-    <!-- HEADER -->
+    <!-- Metrics -->
+    <div class="metrics-grid">
 
-    <div class="header">
+      <div class="metric-cell">
+        <p class="metric-key">
+          <i class="ti ti-trending-up"></i> Average marks
+        </p>
+        <p class="metric-val" th:text="${averageMarks}">—</p>
+      </div>
 
-        <div class="icon">
-            📊
-        </div>
+      <div class="metric-cell">
+        <p class="metric-key">
+          <i class="ti ti-book-2"></i> Total subjects
+        </p>
+        <p class="metric-val" th:text="${totalSubjects}">—</p>
+      </div>
 
-        <div class="title">
-            Performance Dashboard
-        </div>
+      <div class="metric-cell">
+        <p class="metric-key">
+          <i class="ti ti-circle-check"></i> Pass percentage
+        </p>
+        <p class="metric-val green" th:text="${passPercentage}">—</p>
+      </div>
 
-        <div class="subtitle">
-            Academic Analytics Overview
-        </div>
+      <div class="metric-cell">
+        <p class="metric-key">
+          <i class="ti ti-award"></i> Performance
+        </p>
+        <p class="metric-val green" th:text="${performance}">—</p>
+      </div>
 
     </div>
 
-    <!-- GRID -->
+    <!-- Standing -->
+    <div class="standing-row">
+      <div>
+        <p class="standing-label">Academic standing</p>
+        <p class="standing-value"
+           th:text="${performance == 'Excellent'} ? 'Outstanding Performer' :
+                    (${performance == 'Good'}     ? 'Strong Performance'    :
+                    (${performance == 'Average'}  ? 'Satisfactory Progress' :
+                    'Needs Improvement'))">—</p>
+      </div>
 
-    <div class="stats-grid">
-
-        <!-- Average Marks -->
-
-        <div class="metric-card">
-
-            <div class="metric-icon">
-                📈
-            </div>
-
-            <div
-                class="metric-value"
-                th:text="${averageMarks}">
-            </div>
-
-            <div class="metric-label">
-                Average Marks
-            </div>
-
-        </div>
-
-        <!-- Total Subjects -->
-
-        <div class="metric-card">
-
-            <div class="metric-icon">
-                📚
-            </div>
-
-            <div
-                class="metric-value"
-                th:text="${totalSubjects}">
-            </div>
-
-            <div class="metric-label">
-                Total Subjects
-            </div>
-
-        </div>
-
-        <!-- Pass Percentage -->
-
-        <div class="metric-card">
-
-            <div class="metric-icon">
-                ✅
-            </div>
-
-            <div
-                class="metric-value"
-                th:text="${passPercentage}">
-            </div>
-
-            <div class="metric-label">
-                Pass Percentage
-            </div>
-
-        </div>
-
-        <!-- Performance -->
-
-        <div class="metric-card">
-
-            <div class="metric-icon">
-                🏆
-            </div>
-
-            <div
-                class="metric-value performance-status"
-                th:text="${performance}">
-            </div>
-
-            <div class="metric-label">
-                Performance
-            </div>
-
-        </div>
-
+      <span th:classappend="${performance == 'Excellent'} ? 'badge-excellent' :
+                            (${performance == 'Good'}     ? 'badge-good'      :
+                            (${performance == 'Average'}  ? 'badge-average'   :
+                            'badge-poor'))"
+            class="standing-badge">
+        <i class="ti ti-star"></i>
+        <span th:text="${performance}">—</span>
+      </span>
     </div>
 
-    <!-- STANDING -->
-
-    <div class="standing-box">
-
-        <div class="standing-title">
-            Academic Standing
-        </div>
-
-        <div class="standing-status">
-
-            <span th:if="${performance == 'Excellent'}">
-                🌟 Outstanding Performer
-            </span>
-
-            <span th:if="${performance == 'Good'}">
-                ⭐ Strong Performance
-            </span>
-
-            <span th:if="${performance == 'Average'}">
-                📘 Satisfactory Progress
-            </span>
-
-            <span th:if="${performance == 'Poor'}">
-                ⚠ Needs Improvement
-            </span>
-
-        </div>
-
-    </div>
-
-    <!-- FOOTER STATUS -->
-
-    
-
-</div>
-
+  </div>
 </div>
 
 </body>
 </html>
-

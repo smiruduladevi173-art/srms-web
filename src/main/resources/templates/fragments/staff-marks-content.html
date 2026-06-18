@@ -1,271 +1,304 @@
-<form th:action="@{/staff/marks}" method="get">
+<div class="mk-page">
 
-    <div class="filter-row">
+  <div class="mk-header">
+    <h2 class="mk-title">Marks</h2>
+    <p class="mk-subtitle"
+       th:text="${rows != null and !#lists.isEmpty(rows) ? (rows.size() + ' students loaded') : 'Select a department and subject to load students'}">
+      Select a department and subject to load students
+    </p>
+  </div>
 
-        <select
-                name="departmentId"
-                onchange="this.form.submit()">
+  <form th:action="@{/staff/marks}" method="get" class="mk-filters">
 
-            <option value="0">
-                Select Department
-            </option>
-
-            <option
-                    th:each="dep : ${departments}"
-                    th:value="${dep.id}"
-                    th:text="${dep.departmentName}"
-                    th:selected="${dep.id == departmentId}">
-            </option>
-
-        </select>
-
-        <select
-                name="subjectId"
-                onchange="this.form.submit()">
-
-            <option value="0">
-                Select Subject
-            </option>
-
-            <option
-                    th:each="sub : ${subjects}"
-                    th:value="${sub.id}"
-                    th:text="${sub.subjectName}"
-                    th:selected="${sub.id == subjectId}">
-            </option>
-
-        </select>
-
+    <div class="mk-field-group">
+      <label class="mk-label"><i class="ti ti-building"></i> Department</label>
+      <select name="departmentId" class="mk-select" onchange="this.form.submit()">
+        <option value="0">Select department</option>
+        <option th:each="dep : ${departments}"
+                th:value="${dep.id}"
+                th:text="${dep.departmentName}"
+                th:selected="${dep.id == departmentId}"></option>
+      </select>
     </div>
 
-</form>
+    <div class="mk-field-group">
+      <label class="mk-label"><i class="ti ti-book-2"></i> Subject</label>
+      <select name="subjectId" class="mk-select" onchange="this.form.submit()">
+        <option value="0">Select subject</option>
+        <option th:each="sub : ${subjects}"
+                th:value="${sub.id}"
+                th:text="${sub.subjectName}"
+                th:selected="${sub.id == subjectId}"></option>
+      </select>
+    </div>
 
+  </form>
 
-<div class="content-card">
+  <form th:action="@{/staff/marks/save}" method="post">
 
-    <h2 class="page-title">
-        Marks Management
-    </h2>
+    <input type="hidden" name="departmentId" th:value="${departmentId}">
+    <input type="hidden" name="subjectId" th:value="${subjectId}">
 
-    <form
-            th:action="@{/staff/marks/save}"
-            method="post">
+    <div class="mk-table-wrap">
+      <table class="mk-table">
+        <thead>
+          <tr>
+            <th>Roll no</th>
+            <th>Student name</th>
+            <th>Marks</th>
+          </tr>
+        </thead>
+        <tbody>
 
-        <input
-                type="hidden"
-                name="departmentId"
-                th:value="${departmentId}">
+          <tr th:if="${rows == null or #lists.isEmpty(rows)}">
+            <td colspan="3">
+              <div class="mk-empty">
+                <i class="ti ti-filter"></i>
+                <p>Select a department and subject to load students</p>
+              </div>
+            </td>
+          </tr>
 
-        <input
-                type="hidden"
-                name="subjectId"
-                th:value="${subjectId}">
+          <tr th:each="row : ${rows}">
+            <td>
+              <input type="hidden" name="studentId" th:value="${row.studentId}">
+              <span class="mk-mono" th:text="${row.rollNumber}">2024CS001</span>
+            </td>
 
-        <table class="marks-table">
+            <td>
+              <span th:text="${row.name}">Student name</span>
+            </td>
 
-            <thead>
+            <td>
+              <div class="mk-marks-cell">
+                <input type="number"
+                       name="marks"
+                       min="0"
+                       max="100"
+                       class="mk-input"
+                       th:value="${row.marks}"
+                       oninput="updateStatus(this)">
+                <span class="mk-status">—</span>
+              </div>
+            </td>
+          </tr>
 
-            <tr>
+        </tbody>
+      </table>
+    </div>
 
-                <th>
-                    Roll No
-                </th>
+    <div class="mk-actions" th:if="${rows != null and !#lists.isEmpty(rows)}">
+      <button type="submit" class="mk-btn mk-btn--dark">
+        <i class="ti ti-check"></i> Save marks
+      </button>
+    </div>
 
-                <th>
-                    Student Name
-                </th>
-
-                <th>
-                    Marks
-                </th>
-
-            </tr>
-
-            </thead>
-
-            <tbody>
-
-            <tr th:if="${#lists.isEmpty(rows)}">
-
-                <td colspan="3"
-                    style="text-align:center;padding:30px;color:#64748B;">
-
-                    Select Department and Subject
-
-                </td>
-
-            </tr>
-
-            <tr th:each="row : ${rows}">
-
-                <input
-                        type="hidden"
-                        name="studentId"
-                        th:value="${row.studentId}">
-
-                <td>
-
-                    <span
-                            th:text="${row.rollNumber}">
-                    </span>
-
-                </td>
-
-                <td>
-
-                    <span
-                            th:text="${row.name}">
-                    </span>
-
-                </td>
-
-                <td>
-
-                    <input
-                            type="number"
-                            name="marks"
-                            min="0"
-                            max="100"
-                            class="mark-input"
-                            th:value="${row.marks}">
-
-                </td>
-
-            </tr>
-
-            </tbody>
-
-        </table>
-
-        <div class="button-row">
-
-            <button
-                    type="submit"
-                    class="save-btn">
-
-                Save Marks
-
-            </button>
-
-        </div>
-
-    </form>
+  </form>
 
 </div>
 
 <style>
+  .mk-page {
+    --mk-text: #0F172A;
+    --mk-muted: #64748B;
+    --mk-faint: #94A3B8;
+    --mk-border: #E2E8F0;
+    --mk-surface: #F8FAFC;
+    --mk-accent: #0F6E56;
+    --mk-accent-soft: #E1F5EE;
+    --mk-fail: #B91C1C;
+    --mk-fail-soft: #FEE2E2;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--mk-text);
+  }
 
-.filter-row{
+  .mk-header { margin-bottom: 20px; }
+  .mk-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .mk-subtitle { font-size: 13px; color: var(--mk-muted); }
 
-    display:flex;
-    gap:16px;
-    align-items:center;
-    margin-bottom:24px;
-    flex-wrap:wrap;
+  /* Filters */
+  .mk-filters {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
 
-}
+  .mk-field-group { display: flex; flex-direction: column; gap: 6px; }
 
-.filter-row select{
+  .mk-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--mk-muted);
+  }
 
-    padding:12px;
-    min-width:240px;
-    border:1px solid #D6DCE5;
-    border-radius:10px;
-    font-size:14px;
-    background:white;
+  .mk-label i { font-size: 14px; color: var(--mk-faint); }
 
-}
+  .mk-select {
+    min-width: 220px;
+    padding: 10px 14px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--mk-text);
+    background: #fff;
+    border: 1px solid var(--mk-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+  }
 
-.content-card{
+  .mk-select:hover { border-color: #CBD5E1; }
 
-    background:white;
-    padding:24px;
-    border-radius:18px;
+  .mk-select:focus {
+    outline: none;
+    border-color: var(--mk-accent);
+    box-shadow: 0 0 0 3px rgba(15,110,86,.12);
+  }
 
-    box-shadow:
-            0 4px 20px
-            rgba(
-                    0,
-                    0,
-                    0,
-                    0.06
-            );
+  /* Table */
+  .mk-table-wrap {
+    border: 1px solid var(--mk-border);
+    border-radius: 14px;
+    overflow: auto;
+  }
 
-    overflow:auto;
+  .mk-table { width: 100%; border-collapse: collapse; }
 
-}
+  .mk-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--mk-muted);
+    background: var(--mk-surface);
+    border-bottom: 1px solid var(--mk-border);
+  }
 
-.page-title{
+  .mk-table tbody td {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--mk-surface);
+  }
 
-    font-size:28px;
-    font-weight:700;
-    margin-bottom:24px;
-    color:#0F172A;
+  .mk-table tbody tr:last-child td { border-bottom: none; }
+  .mk-table tbody tr:hover { background: #FAFBFD; }
 
-}
+  .mk-mono {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 13px;
+    color: var(--mk-muted);
+  }
 
-.marks-table{
+  /* Marks input + live pass/fail badge */
+  .mk-marks-cell { display: flex; align-items: center; gap: 10px; }
 
-    width:100%;
-    border-collapse:collapse;
+  .mk-input {
+    width: 70px;
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 14px;
+    text-align: center;
+    color: var(--mk-text);
+    background: #fff;
+    border: 1px solid var(--mk-border);
+    border-radius: 8px;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+  }
 
-}
+  .mk-input:focus {
+    outline: none;
+    border-color: var(--mk-accent);
+    box-shadow: 0 0 0 3px rgba(15,110,86,.12);
+  }
 
-.marks-table th{
+  .mk-input--pass { border-color: var(--mk-accent); background: #F4FBF8; }
+  .mk-input--fail { border-color: var(--mk-fail); background: #FEF5F5; }
 
-    padding:16px;
-    text-align:left;
-    background:#F8FAFC;
-    border-bottom:1px solid #E2E8F0;
+  .mk-status {
+    min-width: 44px;
+    padding: 4px 10px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 999px;
+    background: var(--mk-surface);
+    color: var(--mk-faint);
+  }
 
-}
+  .mk-status--pass { background: var(--mk-accent-soft); color: var(--mk-accent); }
+  .mk-status--fail { background: var(--mk-fail-soft); color: var(--mk-fail); }
 
-.marks-table td{
+  /* Empty state */
+  .mk-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 0;
+    color: var(--mk-muted);
+  }
 
-    padding:16px;
-    border-bottom:1px solid #EDF2F7;
+  .mk-empty i { font-size: 28px; color: var(--mk-faint); }
+  .mk-empty p { font-size: 13px; }
 
-}
+  /* Actions */
+  .mk-actions { display: flex; justify-content: flex-end; margin-top: 20px; }
 
-.marks-table tr:hover{
+  .mk-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s;
+  }
 
-    background:#FAFBFD;
+  .mk-btn i { font-size: 15px; }
+  .mk-btn:focus-visible { outline: 2px solid var(--mk-accent); outline-offset: 2px; }
+  .mk-btn--dark { background: var(--mk-text); color: #fff; }
+  .mk-btn--dark:hover { background: #1E293B; }
 
-}
-
-.mark-input{
-
-    width:120px;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #D6DCE5;
-
-}
-
-.button-row{
-
-    margin-top:24px;
-    display:flex;
-    justify-content:flex-end;
-
-}
-
-.save-btn{
-
-    padding:12px 24px;
-    border:none;
-    border-radius:10px;
-    background:#2563EB;
-    color:white;
-    font-weight:600;
-    cursor:pointer;
-
-}
-
-.save-btn:hover{
-
-    opacity:.92;
-
-}
-
+  @media (max-width: 720px) {
+    .mk-select { min-width: 100%; }
+    .mk-field-group { width: 100%; }
+  }
 </style>
+
+<script>
+  function updateStatus(input) {
+    const cell = input.closest('.mk-marks-cell');
+    const badge = cell.querySelector('.mk-status');
+    const raw = input.value;
+    const val = raw === '' ? null : Number(raw);
+
+    input.classList.remove('mk-input--pass', 'mk-input--fail');
+    badge.classList.remove('mk-status--pass', 'mk-status--fail');
+
+    if (val === null || Number.isNaN(val)) {
+      badge.textContent = '—';
+      return;
+    }
+
+    if (val >= 35) {
+      badge.textContent = 'Pass';
+      badge.classList.add('mk-status--pass');
+      input.classList.add('mk-input--pass');
+    } else {
+      badge.textContent = 'Fail';
+      badge.classList.add('mk-status--fail');
+      input.classList.add('mk-input--fail');
+    }
+  }
+
+  document.querySelectorAll('.mk-input').forEach(updateStatus);
+</script>

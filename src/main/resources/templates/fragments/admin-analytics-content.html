@@ -1,383 +1,358 @@
 <style>
-
-.analytics-cards{
-
-    display:grid;
-
-    grid-template-columns:repeat(3,1fr);
-
-    gap:25px;
-
-    margin-bottom:40px;
-
-}
-
-.analytics-box{
-
-    background:#FFFFFF;
-
-    padding:28px;
-
-    border-radius:22px;
-
-    border:1px solid #E2E8F0;
-
-    box-shadow:
-    0 8px 30px rgba(15,23,42,.08);
-
-    transition:.3s;
-
-}
-
-.analytics-box:hover{
-
-    transform:translateY(-5px);
-
-}
-
-.analytics-box h3{
-
-    color:#64748B;
-
-    font-size:15px;
-
-    margin-bottom:15px;
-
-}
-
-.analytics-box h2{
-
-    color:#2563EB;
-
-    font-size:38px;
-
-    font-weight:700;
-
-}
-
-.chart-container{
-
-    background:#FFFFFF;
-
-    padding:25px;
-
-    border-radius:24px;
-
-    border:1px solid #E2E8F0;
-
-    box-shadow:
-    0 8px 30px rgba(15,23,42,.08);
-
-    margin-top:25px;
-
-    margin-bottom:40px;
-
-    height:500px;
-
-}
-
-.analytics-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    overflow:hidden;
-
-    border-radius:18px;
-
-    background:white;
-
-}
-
-.analytics-table th{
-
-    background:#2563EB;
-
-    color:white;
-
-    padding:16px;
-
-    font-size:15px;
-
-}
-
-.analytics-table td{
-
-    padding:16px;
-
-    border-bottom:1px solid #E2E8F0;
-
-}
-
-.analytics-table tr:hover{
-
-    background:#F8FAFC;
-
-}
-
-.section-title{
-
-    color:#0F172A;
-
-    margin-bottom:20px;
-
-    font-size:26px;
-
-    font-weight:700;
-
-}
-
-hr{
-
-    border:none;
-
-    height:1px;
-
-    background:#E2E8F0;
-
-    margin:40px 0;
-
-}
-
+  .an-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .an-head h1 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary, #0F172A);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .an-head h1 i { font-size: 17px; color: #6D28D9; }
+
+  .an-head .year-badge {
+    font-size: 11px;
+    color: var(--color-text-secondary, #64748B);
+    background: var(--color-background-secondary, #F8FAFC);
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .metric {
+    background: var(--color-background-secondary, #F8FAFC);
+    border-radius: 10px;
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-accent {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .ac-purple { background: #6D28D9; }
+  .ac-blue   { background: #2563EB; }
+  .ac-teal   { background: #0F6E56; }
+  .ac-amber  { background: #BA7517; }
+  .ac-green  { background: #3B6D11; }
+  .ac-red    { background: #A32D2D; }
+
+  .metric-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .metric-label i { font-size: 14px; }
+
+  .metric-value {
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--color-text-primary, #0F172A);
+    line-height: 1;
+  }
+
+  .an-divider {
+    height: 0.5px;
+    background: var(--color-border-tertiary, #E2E8F0);
+    margin: 20px 0;
+    border: none;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .section-label i { font-size: 14px; color: #6D28D9; }
+
+  .chart-card {
+    background: var(--color-background-primary, #fff);
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .chart-wrap { width: 100%; height: 460px; }
+
+  .css-chart { display: flex; flex-direction: column; gap: 10px; padding: 4px 0; }
+
+  .css-bar-row { display: grid; grid-template-columns: 140px 1fr 48px; align-items: center; gap: 12px; }
+
+  .css-bar-label {
+    font-size: 13px;
+    color: var(--color-text-primary, #0F172A);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+  }
+
+  .css-bar-track {
+    height: 28px;
+    background: var(--color-background-secondary, #F1F5F9);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .css-bar-fill {
+    height: 100%;
+    background: rgba(109,40,217,0.15);
+    border-right: 2px solid #6D28D9;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+  }
+
+  .css-bar-val {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6D28D9;
+  }
+
+  .analytics-table-wrap {
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .analytics-table thead tr {
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+  }
+
+  .analytics-table th {
+    padding: 7px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+  }
+
+  .analytics-table td {
+    padding: 10px 10px;
+    color: var(--color-text-primary, #0F172A);
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+  }
+
+  .analytics-table tbody tr:last-child td { border-bottom: none; }
+
+  .analytics-table tbody tr:hover td {
+    background: var(--color-background-secondary, #F8FAFC);
+  }
+
+  .rank-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .rank-1 { background: #FFF7ED; color: #92400E; }
+  .rank-2 { background: #F1F5F9; color: #475569; }
+  .rank-3 { background: #FFF7ED; color: #92400E; opacity: .7; }
+  .rank-n { background: var(--color-background-secondary, #F8FAFC); color: var(--color-text-secondary, #64748B); }
+
+  .dept-pill {
+    display: inline-flex;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    background: #EDE9FE;
+    color: #5B21B6;
+  }
+
+  .avg-bar-wrap { display: flex; align-items: center; gap: 8px; }
+
+  .avg-bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--color-background-secondary, #F1F5F9);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .avg-bar-fill { height: 100%; border-radius: 2px; background: #6D28D9; }
+
+  .avg-val {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-primary, #0F172A);
+    min-width: 38px;
+    text-align: right;
+  }
+
+  @media (max-width: 640px) {
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  }
 </style>
 
 
-<br>
-
-<h1 class="section-title">
-📊 Analytics Dashboard
-</h1>
-
-<div class="analytics-cards">
-
-    <!-- Row 1 -->
-
-    <div class="analytics-box">
-
-        <h3>👨‍🎓 Total Students</h3>
-
-        <h2
-        th:text="${summary.totalStudents}">
-        0
-        </h2>
-
-    </div>
-
-    <div class="analytics-box">
-
-        <h3>🏢 Departments</h3>
-
-        <h2
-        th:text="${summary.totalDepartments}">
-        0
-        </h2>
-
-    </div>
-
-    <div class="analytics-box">
-
-        <h3>📚 Subjects</h3>
-
-        <h2
-        th:text="${summary.totalSubjects}">
-        0
-        </h2>
-
-    </div>
-
-
-    <!-- Row 2 -->
-
-    <div class="analytics-box">
-
-        <h3>📈 Overall Average</h3>
-
-        <h2
-        th:text="${#numbers.formatDecimal(summary.overallAverage,1,2)}+'%'">
-        0%
-        </h2>
-
-    </div>
-
-    <div class="analytics-box">
-
-        <h3>✅ Cleared Students</h3>
-
-        <h2
-        th:text="${summary.passedStudents}">
-        0
-        </h2>
-
-    </div>
-
-    <div class="analytics-box">
-
-        <h3>📕 Students With Arrears</h3>
-
-        <h2
-        th:text="${summary.failedStudents}">
-        0
-        </h2>
-
-    </div>
-
+<div class="an-head">
+  <h1><i class="ti ti-chart-bar" aria-hidden="true"></i> Analytics</h1>
+  <span class="year-badge">2024 – 25</span>
 </div>
 
-<hr>
-
-<h2>📊 Top 10 Performance Chart</h2>
-
-<div class="chart-container">
-
-    <canvas id="topStudentsChart"></canvas>
-
+<!-- METRIC CARDS -->
+<div class="metric-grid">
+  <div class="metric">
+    <div class="metric-accent ac-purple"></div>
+    <div class="metric-label"><i class="ti ti-users" aria-hidden="true"></i> Students</div>
+    <div class="metric-value" th:text="${summary.totalStudents}">0</div>
+  </div>
+  <div class="metric">
+    <div class="metric-accent ac-blue"></div>
+    <div class="metric-label"><i class="ti ti-building" aria-hidden="true"></i> Departments</div>
+    <div class="metric-value" th:text="${summary.totalDepartments}">0</div>
+  </div>
+  <div class="metric">
+    <div class="metric-accent ac-teal"></div>
+    <div class="metric-label"><i class="ti ti-book-2" aria-hidden="true"></i> Subjects</div>
+    <div class="metric-value" th:text="${summary.totalSubjects}">0</div>
+  </div>
+  <div class="metric">
+    <div class="metric-accent ac-amber"></div>
+    <div class="metric-label"><i class="ti ti-percentage" aria-hidden="true"></i> Avg score</div>
+    <div class="metric-value"
+         th:text="${#numbers.formatDecimal(summary.overallAverage,1,2)} + '%'">0%</div>
+  </div>
+  <div class="metric">
+    <div class="metric-accent ac-green"></div>
+    <div class="metric-label"><i class="ti ti-circle-check" aria-hidden="true"></i> Cleared</div>
+    <div class="metric-value" th:text="${summary.passedStudents}">0</div>
+  </div>
+  <div class="metric">
+    <div class="metric-accent ac-red"></div>
+    <div class="metric-label"><i class="ti ti-alert-circle" aria-hidden="true"></i> Arrears</div>
+    <div class="metric-value" th:text="${summary.failedStudents}">0</div>
+  </div>
 </div>
 
-<hr>
+<hr class="an-divider">
 
-<h2>🏆 Top 10 Performing Students</h2>
+<!-- CHART -->
+<p class="section-label"><i class="ti ti-chart-bar" aria-hidden="true"></i> Top 10 performance</p>
+<div class="chart-card">
+  <div id="cssChart" class="css-chart"></div>
+</div>
 
-<table class="analytics-table">
+<hr class="an-divider">
 
+<!-- TABLE -->
+<p class="section-label"><i class="ti ti-trophy" aria-hidden="true"></i> Top 10 students</p>
+<div class="analytics-table-wrap">
+  <table class="analytics-table">
     <thead>
-
-    <tr>
-
-        <th>Rank</th>
-        <th>Roll No</th>
+      <tr>
+        <th style="width:44px">Rank</th>
         <th>Name</th>
+        <th>Roll no</th>
         <th>Department</th>
-        <th>Average %</th>
-
-    </tr>
-
+        <th style="width:140px">Average</th>
+      </tr>
     </thead>
-
     <tbody>
-
-    <tr
-    th:each="student,stat : ${topStudents}">
-
+      <tr th:each="student, stat : ${topStudents}">
         <td>
-
-            <span th:if="${stat.count==1}">
-                🥇
-            </span>
-
-            <span th:if="${stat.count==2}">
-                🥈
-            </span>
-
-            <span th:if="${stat.count==3}">
-                🥉
-            </span>
-
-            <span
-            th:if="${stat.count>3}"
-            th:text="${stat.count}">
-            </span>
-
+          <span class="rank-cell"
+            th:classappend="${stat.count == 1} ? 'rank-1' : (${stat.count == 2} ? 'rank-2' : (${stat.count == 3} ? 'rank-3' : 'rank-n'))"
+            th:text="${stat.count == 1} ? '1st' : (${stat.count == 2} ? '2nd' : (${stat.count == 3} ? '3rd' : ${stat.count}))">
+          </span>
         </td>
-
-        <td th:text="${student.rollNumber}">
-            C001
+        <td style="font-weight:500" th:text="${student.name}">Name</td>
+        <td style="color:var(--color-text-secondary,#64748B);font-size:11px" th:text="${student.rollNumber}">R001</td>
+        <td><span class="dept-pill" th:text="${student.department}">CSE</span></td>
+        <td>
+          <div class="avg-bar-wrap">
+            <div class="avg-bar-track">
+              <div class="avg-bar-fill"
+                   th:style="'width:' + ${student.average} + '%'"></div>
+            </div>
+            <span class="avg-val"
+                  th:text="${#numbers.formatDecimal(student.average,1,2)} + '%'">0%</span>
+          </div>
         </td>
-
-        <td th:text="${student.name}">
-            Student Name
-        </td>
-
-        <td th:text="${student.department}">
-            CSE
-        </td>
-
-        <td
-        th:text="${#numbers.formatDecimal(student.average,1,2)} + '%'">
-            90%
-        </td>
-
-    </tr>
-
+      </tr>
     </tbody>
+  </table>
+</div>
 
-</table>
+<!-- Hidden data for chart -->
+<input type="hidden" id="labels"      th:value="${topStudents.![rollNumber]}">
+<input type="hidden" id="averages"    th:value="${topStudents.![average]}">
+<input type="hidden" id="departments" th:value="${topStudents.![department]}">
+<input type="hidden" id="names"       th:value="${topStudents.![name]}">
 
-
-<input
-type="hidden"
-id="labels"
-th:value="${topStudents.![rollNumber]}"
->
-
-<input
-type="hidden"
-id="averages"
-th:value="${topStudents.![average]}"
->
-
-<input
-type="hidden"
-id="departments"
-th:value="${topStudents.![department]}"
->
-
-<input
-type="hidden"
-id="names"
-th:value="${topStudents.![name]}"
->
 
 <script>
+window.onload = function () {
+  const parse = id =>
+    document.getElementById(id).value
+      .replace(/[\[\]]/g, '').split(',').map(x => x.trim());
 
-window.onload=function(){
+  const names       = parse('names');
+  const averages    = parse('averages').map(Number);
+  const departments = parse('departments');
 
-const averages =
-document
-.getElementById("averages")
-.value
-.replaceAll("[","")
-.replaceAll("]","")
-.split(",")
-.map(x => parseFloat(x));
+  const max = 100, min = 50;
+  const chart = document.getElementById('cssChart');
 
-const names =
-document
-.getElementById("names")
-.value
-.replaceAll("[","")
-.replaceAll("]","")
-.split(",")
-.map(x => x.trim());
-
-const departments =
-document
-.getElementById("departments")
-.value
-.replaceAll("[","")
-.replaceAll("]","")
-.split(",")
-.map(x => x.trim());
-
-new Chart(
-document.getElementById("topStudentsChart"),
-{
-    type:"bar",
-
-    data:{
-        labels:names.map(
-            (name,index)=>
-            name + "\n" + "[" +  departments[index] +"]"
-        ),
-
-        datasets:[{
-            label:"Average Marks",
-            data:averages
-        }]
-    }
-}
-);
-
+  chart.innerHTML = names.map((name, i) => {
+    const pct = ((averages[i] - min) / (max - min)) * 100;
+    return `
+      <div class="css-bar-row">
+        <div class="css-bar-label" title="${name} · ${departments[i]}">${name}</div>
+        <div class="css-bar-track">
+          <div class="css-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <div class="css-bar-val">${averages[i].toFixed(1)}%</div>
+      </div>`;
+  }).join('');
 };
-
 </script>

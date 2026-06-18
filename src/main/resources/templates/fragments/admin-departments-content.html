@@ -1,531 +1,274 @@
 <style>
-
-/* PAGE */
-.admin-card{
-    background:#FFFFFF;
-    border-radius:18px;
-    padding:32px;
-    box-shadow:
-    0 10px 30px rgba(15,23,42,.06);
-}
-
-/* TITLE */
-
-.section-title{
-    color:#0F172A;
-    font-size:26px;
-    font-weight:700;
-}
-
-.section-sub{
-    color:#64748B;
-    margin-top:6px;
-}
-
-/* MESSAGE */
-
-.message{
-    padding:14px 18px;
-    border-radius:12px;
-    margin-top:20px;
-    margin-bottom:20px;
-    animation:fade .3s ease;
-}
-
-.success-message{
-    background:#ECFDF5;
-    color:#065F46;
-    border:1px solid #A7F3D0;
-}
-
-.error-message{
-    background:#FEF2F2;
-    color:#991B1B;
-    border:1px solid #FECACA;
-}
-
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(-8px);
-}
-
-to{
-opacity:1;
-transform:none;
-}
-
-}
-
-/* FORM */
-
-.department-form{
-
-display:flex;
-gap:14px;
-margin-top:28px;
-
-}
-
-.department-form input{
-
-flex:1;
-
-padding:14px 18px;
-
-border:1px solid #CBD5E1;
-
-background:#F8FAFC;
-
-border-radius:12px;
-
-outline:none;
-
-transition:.25s;
-
-}
-
-.department-form input:focus{
-
-border-color:#3B82F6;
-
-box-shadow:
-0 0 0 4px rgba(59,130,246,.12);
-
-}
-
-/* BUTTON */
-
-.save-btn{
-
-background:#3B82F6;
-
-color:white;
-
-border:none;
-
-padding:14px 24px;
-
-border-radius:12px;
-
-font-weight:600;
-
-cursor:pointer;
-
-transition:.25s;
-
-}
-
-.save-btn:hover{
-
-transform:translateY(-2px);
-
-background:#2563EB;
-
-}
-
-/* TABLE */
-
-.table-wrapper{
-
-margin-top:30px;
-
-border:1px solid #E2E8F0;
-
-border-radius:16px;
-
-overflow:hidden;
-
-}
-
-.department-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-.department-table thead{
-
-background:#1D4ED8;
-
-}
-
-.department-table th{
-
-padding:18px;
-
-color:white;
-
-text-align:left;
-
-font-weight:600;
-
-}
-
-.department-table td{
-
-padding:18px;
-
-border-bottom:1px solid #E2E8F0;
-
-color:#334155;
-
-}
-
-.department-table tbody tr{
-
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.department-table tbody tr:hover{
-
-background:#F8FAFC;
-
-}
-
-.department-table tr.selected{
-
-background:#DBEAFE;
-
-}
-
-.department-table tr.selected td{
-
-color:#1D4ED8;
-
-font-weight:600;
-
-}
-
-/* STUDENT COUNT */
-
-.badge{
-
-display:inline-block;
-
-padding:6px 12px;
-
-background:#EFF6FF;
-
-color:#2563EB;
-
-border-radius:999px;
-
-font-size:13px;
-
-}
-
-/* DELETE */
-
-.action-bar{
-
-display:flex;
-
-justify-content:flex-end;
-
-margin-top:20px;
-
-}
-
-.delete-btn{
-
-display:none;
-
-background:#EF4444;
-
-color:white;
-
-border:none;
-
-padding:14px 22px;
-
-border-radius:12px;
-
-cursor:pointer;
-
-font-weight:600;
-
-transition:.2s;
-
-}
-
-.delete-btn:hover{
-
-background:#DC2626;
-
-transform:translateY(-2px);
-
-}
-
-.delete-btn.show{
-
-display:block;
-
-}
-
-/* EMPTY */
-
-.empty{
-
-padding:40px;
-
-text-align:center;
-
-color:#94A3B8;
-
-}
-
+  .dp-header { margin-bottom: 20px; }
+
+  .dp-header h2 {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--color-text-primary, #0F172A);
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dp-header h2 i { font-size: 18px; color: #6D28D9; }
+
+  .dp-header p { font-size: 12px; color: var(--color-text-secondary, #64748B); margin: 0; }
+
+  .msg-ok {
+    margin-bottom: 16px;
+    background: #ECFDF5;
+    color: #065F46;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 0.5px solid #A7F3D0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: dp-fade .3s ease;
+  }
+
+  .msg-err {
+    margin-bottom: 16px;
+    background: #FEF2F2;
+    color: #991B1B;
+    font-size: 13px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 0.5px solid #FECACA;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: dp-fade .3s ease;
+  }
+
+  @keyframes dp-fade {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .add-row { display: flex; gap: 10px; margin-bottom: 20px; }
+
+  .add-row input {
+    flex: 1;
+    padding: 9px 12px;
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 8px;
+    background: var(--color-background-secondary, #F8FAFC);
+    font-size: 13px;
+    color: var(--color-text-primary, #0F172A);
+    transition: border-color .15s, background .15s;
+  }
+
+  .add-row input:focus {
+    outline: none;
+    border-color: #6D28D9;
+    background: var(--color-background-primary, #fff);
+  }
+
+  .btn-add {
+    padding: 9px 16px;
+    background: #6D28D9;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background .15s;
+  }
+
+  .btn-add:hover { background: #5B21B6; }
+
+  .tbl-wrap {
+    border: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .department-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+  .department-table thead tr {
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+    background: var(--color-background-secondary, #F8FAFC);
+  }
+
+  .department-table th {
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary, #64748B);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .department-table td {
+    padding: 13px 12px;
+    color: var(--color-text-primary, #0F172A);
+    border-bottom: 0.5px solid var(--color-border-tertiary, #E2E8F0);
+  }
+
+  .department-table tbody tr:last-child td { border-bottom: none; }
+
+  .department-table tbody tr { cursor: pointer; transition: background .12s; }
+
+  .department-table tbody tr:hover td {
+    background: var(--color-background-secondary, #F8FAFC);
+  }
+
+  .department-table tbody tr.selected td {
+    background: #EDE9FE;
+    color: #5B21B6;
+  }
+
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    background: #EDE9FE;
+    color: #5B21B6;
+  }
+
+  .empty-row td {
+    text-align: center;
+    padding: 36px;
+    color: var(--color-text-secondary, #64748B);
+    font-size: 13px;
+  }
+
+  .action-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 14px;
+    min-height: 36px;
+  }
+
+  .delete-btn {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #FEF2F2;
+    color: #991B1B;
+    border: 0.5px solid #FECACA;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+
+  .delete-btn:hover { background: #FEE2E2; }
+
+  .delete-btn.show { display: flex; }
+
+  .dp-hint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--color-text-secondary, #64748B);
+    margin-top: 14px;
+  }
+
+  .dp-hint i { font-size: 14px; }
 </style>
 
 
-
-<div class="admin-card">
-
-<div>
-
-<h2 class="section-title">
-Department Management
-</h2>
-
-<p class="section-sub">
-Double click a department to select and delete
-</p>
-
+<div class="dp-header">
+  <h2><i class="ti ti-building" aria-hidden="true"></i> Department management</h2>
+  <p>Double-click a row to select it, then delete</p>
 </div>
-
 
 <!-- SUCCESS -->
-
-<div
-th:if="${message}"
-class="message success-message"
-id="messageBox">
-
-<span
-th:text="${message}">
-</span>
-
+<div th:if="${message}" class="msg-ok" id="messageBox">
+  <i class="ti ti-circle-check" aria-hidden="true"></i>
+  <span th:text="${message}"></span>
 </div>
-
 
 <!-- ERROR -->
-
-<div
-th:if="${error}"
-class="message error-message"
-id="errorBox">
-
-<span
-th:text="${error}">
-</span>
-
+<div th:if="${error}" class="msg-err" id="errorBox">
+  <i class="ti ti-alert-circle" aria-hidden="true"></i>
+  <span th:text="${error}"></span>
 </div>
 
-
-
-<!-- ADD -->
-
-<form
-th:action="@{/admin/departments/add}"
-method="post"
-class="department-form">
-
-<input
-type="text"
-name="departmentName"
-placeholder="Enter Department Name"
-required>
-
-<button
-type="submit"
-class="save-btn">
-
-+ Add Department
-
-</button>
-
+<!-- ADD FORM -->
+<form th:action="@{/admin/departments/add}" method="post" class="add-row">
+  <input type="text" name="departmentName" placeholder="Enter department name" required>
+  <button type="submit" class="btn-add">
+    <i class="ti ti-plus" aria-hidden="true"></i> Add department
+  </button>
 </form>
 
+<!-- DELETE FORM + TABLE -->
+<form th:action="@{/admin/departments/delete}" method="post" id="deleteForm">
+  <input type="hidden" name="id" id="selectedId">
 
+  <div class="tbl-wrap">
+    <table class="department-table">
+      <thead>
+        <tr>
+          <th>Department</th>
+          <th>Students</th>
+        </tr>
+      </thead>
 
-<!-- DELETE -->
+      <tbody th:if="${!#lists.isEmpty(departments)}">
+        <tr
+          th:each="department : ${departments}"
+          th:attr="data-id=${department.id}"
+          ondblclick="selectDepartment(this)">
+          <td th:text="${department.departmentName}"></td>
+          <td><span class="count-badge" th:text="${department.studentCount}"></span></td>
+        </tr>
+      </tbody>
 
-<form
-th:action="@{/admin/departments/delete}"
-method="post"
-id="deleteForm">
+      <tbody th:if="${#lists.isEmpty(departments)}">
+        <tr class="empty-row">
+          <td colspan="2">No departments created yet</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-<input
-type="hidden"
-name="id"
-id="selectedId">
-
-<div class="table-wrapper">
-
-<table class="department-table">
-
-<thead>
-
-<tr>
-
-<th>Department</th>
-
-<th>Students</th>
-
-</tr>
-
-</thead>
-
-
-<tbody
-th:if="${!#lists.isEmpty(departments)}">
-
-<tr
-th:each="department : ${departments}"
-
-th:attr="
-data-id=${department.id}"
-
-ondblclick="selectDepartment(this)">
-
-<td
-th:text="${department.departmentName}">
-</td>
-
-<td>
-
-<span
-class="badge"
-th:text="${department.studentCount}">
-
-</span>
-
-</td>
-
-</tr>
-
-</tbody>
-
-
-<tbody
-th:if="${#lists.isEmpty(departments)}">
-
-<tr>
-
-<td
-colspan="2"
-class="empty">
-
-No departments created
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-
-<div class="action-bar">
-
-<button
-type="submit"
-id="deleteBtn"
-class="delete-btn">
-
-Delete Department
-
-</button>
-
-</div>
-
+  <div class="action-bar">
+    <button type="submit" id="deleteBtn" class="delete-btn">
+      <i class="ti ti-trash" aria-hidden="true"></i> Delete department
+    </button>
+  </div>
 </form>
 
-</div>
-
+<p class="dp-hint">
+  <i class="ti ti-info-circle" aria-hidden="true"></i>
+  Departments with students cannot be deleted until students are reassigned.
+</p>
 
 
 <script>
+  function selectDepartment(row) {
+    document.querySelectorAll('.department-table tbody tr')
+      .forEach(r => r.classList.remove('selected'));
+    row.classList.add('selected');
+    document.getElementById('selectedId').value = row.dataset.id;
+    document.getElementById('deleteBtn').classList.add('show');
+  }
 
-function selectDepartment(row){
-
-document
-.querySelectorAll(
-".department-table tr"
-)
-
-.forEach(
-r=>r.classList.remove(
-"selected"
-)
-);
-
-row.classList.add(
-"selected"
-);
-
-document
-.getElementById(
-"selectedId"
-)
-.value=
-row.dataset.id;
-
-document
-.getElementById(
-"deleteBtn"
-)
-.classList.add(
-"show"
-);
-
-}
-
-
-
-setTimeout(()=>{
-
-const success=
-document.getElementById(
-"messageBox"
-);
-
-const error=
-document.getElementById(
-"errorBox"
-);
-
-if(success){
-
-success.style.opacity="0";
-
-setTimeout(
-()=>success.remove(),
-400
-);
-
-}
-
-if(error){
-
-error.style.opacity="0";
-
-setTimeout(
-()=>error.remove(),
-400
-);
-
-}
-
-},4000);
-
+  setTimeout(() => {
+    ['messageBox', 'errorBox'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.transition = 'opacity .4s';
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 400);
+      }
+    });
+  }, 4000);
 </script>

@@ -1,671 +1,373 @@
 <!DOCTYPE html>
-
 <html xmlns:th="http://www.thymeleaf.org">
 
-<div class="students-module">
-
-<!-- HEADER -->
-
-<div class="students-header">
-
-<div>
-
-<h2 class="title">
-
-STUDENTS LIST
-
-</h2>
-
-<div
-id="modeLabel"
-class="mode-label">
-
-VIEW MODE
-
-</div>
-
-</div>
-
-<div class="header-right">
-
-<div class="search-box">
-
-<input
-type="text"
-
-id="studentSearch"
-
-placeholder="Search student..."
-
-onkeyup="filterStudents()"
-
->
-
-<span class="search-icon">
-
-⌕
-
-</span>
-
-</div>
-
-<button
-
-type="button"
-
-class="edit-btn"
-
-onclick="enableEdit()"
-
->
-
-Edit
-
-</button>
-
-</div>
-
-</div>
-
-<!-- FORM -->
-
-<form
-
-id="studentForm"
-
-th:action="@{/staff/students/save}"
-
-method="post"
-
->
-
-<div class="table-card">
-
-<table id="studentTable">
-
-<thead>
-
-<tr>
-
-<th>Roll No</th>
-
-<th>Name</th>
-
-<th>Gender</th>
-
-<th>DOB</th>
-
-<th>Department</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr
-th:each="student : ${students}"
-
->
-
-<!-- ROLL -->
-
-<td>
-
-<input
-
-readonly
-
-class="readonly"
-
-name="rollNumber"
-
-th:value="${student.rollNumber}"
-
->
-
-</td>
-
-<!-- NAME -->
-
-<td>
-
-<input
-
-disabled
-
-class="editable"
-
-name="name"
-
-th:value="${student.name}"
-
->
-
-</td>
-
-<!-- GENDER -->
-
-<td>
-
-<select
-
-disabled
-
-class="editable"
-
-name="gender"
-
->
-
-<option
-
-value="Male"
-
-th:selected="${student.gender=='Male'}"
-
->
-
-Male
-
-</option>
-
-<option
-
-value="Female"
-
-th:selected="${student.gender=='Female'}"
-
->
-
-Female
-
-</option>
-
-</select>
-
-</td>
-
-<!-- DOB -->
-
-<td>
-
-<input
-
-disabled
-
-class="editable"
-
-type="date"
-
-name="dob"
-
-th:value="${student.dob}"
-
->
-
-</td>
-
-<!-- DEPARTMENT -->
-
-<td>
-
-<input
-
-readonly
-
-class="readonly"
-
-name="department"
-
-th:value="${student.department}"
-
->
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-<div class="action-bar">
-
-<button
-
-type="button"
-
-class="cancel-btn"
-
-onclick="cancelEdit()"
-
->
-
-Cancel
-
-</button>
-
-<button
-
-type="submit"
-
-id="saveBtn"
-
-class="save-btn"
-
-disabled
-
->
-
-Save Changes
-
-</button>
-
-</div>
-
-</form>
-
+<div class="sp-page">
+
+  <div class="sp-header">
+    <div>
+      <h2 class="sp-title">Students</h2>
+      <p class="sp-subtitle"
+         th:text="${students != null ? (students.size() + ' students on record') : '0 students on record'}">
+        12 students on record
+      </p>
+    </div>
+
+    <div class="sp-header-right">
+      <div class="sp-search">
+        <i class="ti ti-search sp-search-icon"></i>
+        <input type="text" id="studentSearch" placeholder="Search name, roll no, department…" onkeyup="filterStudents()">
+      </div>
+
+      <span id="modeLabel" class="sp-mode sp-mode--view">
+        <i class="ti ti-eye"></i> View mode
+      </span>
+
+      <button type="button" id="editBtn" class="sp-btn sp-btn--primary" onclick="enableEdit()">
+        <i class="ti ti-pencil"></i> Edit
+      </button>
+    </div>
+  </div>
+
+  <form id="studentForm" th:action="@{/staff/students/save}" method="post">
+
+    <div class="sp-table-wrap">
+      <table class="sp-table" id="studentTable">
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th>Student</th>
+            <th>Gender</th>
+            <th>Date of birth</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="student : ${students}">
+
+            <!-- Roll number — fixed identifier, never editable -->
+            <td>
+              <input type="hidden" name="rollNumber" th:value="${student.rollNumber}">
+              <span class="sp-mono" th:text="${student.rollNumber}">2024CS001</span>
+            </td>
+
+            <!-- Name — editable -->
+            <td>
+              <div class="sp-name-cell">
+                <span class="sp-avatar" th:text="${#strings.toUpperCase(#strings.substring(student.name,0,1))}">A</span>
+                <input class="sp-field" disabled name="name" th:value="${student.name}">
+              </div>
+            </td>
+
+            <!-- Gender — editable -->
+            <td>
+              <select class="sp-field" disabled name="gender">
+                <option value="Male" th:selected="${student.gender == 'Male'}">Male</option>
+                <option value="Female" th:selected="${student.gender == 'Female'}">Female</option>
+              </select>
+            </td>
+
+            <!-- Date of birth — editable -->
+            <td>
+              <input class="sp-field" disabled type="date" name="dob" th:value="${student.dob}">
+            </td>
+
+            <!-- Department — fixed identifier, never editable -->
+            <td>
+              <input type="hidden" name="department" th:value="${student.department}">
+              <span class="sp-tag" th:text="${student.department}">Computer Science</span>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sp-empty" id="noResults">
+        <i class="ti ti-mood-empty"></i>
+        <p>No students match your search</p>
+      </div>
+    </div>
+
+    <div class="sp-actions">
+      <button type="button" class="sp-btn sp-btn--ghost" onclick="cancelEdit()">
+        <i class="ti ti-x"></i> Cancel
+      </button>
+      <button type="submit" id="saveBtn" class="sp-btn sp-btn--dark" disabled>
+        <i class="ti ti-check"></i> Save changes
+      </button>
+    </div>
+
+  </form>
 </div>
 
 <style>
-
-.students-module{
-
-padding:34px;
-
-background:#F8FAFC;
-
-height:100%;
-
-overflow:auto;
-
-}
-
-.students-header{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:flex-start;
-
-margin-bottom:26px;
-
-}
-
-.header-right{
-
-display:flex;
-
-gap:14px;
-
-align-items:center;
-
-}
-
-.title{
-
-font-size:30px;
-
-font-weight:700;
-
-color:#0F172A;
-
-}
-
-.mode-label{
-
-margin-top:10px;
-
-display:inline-block;
-
-padding:8px 14px;
-
-background:#EEF2FF;
-
-color:#2563EB;
-
-border-radius:999px;
-
-font-size:12px;
-
-font-weight:700;
-
-}
-
-/* SEARCH */
-
-.search-box{
-
-position:relative;
-
-width:340px;
-
-}
-
-.search-box input{
-
-width:100%;
-
-padding:14px 50px 14px 18px;
-
-border:1px solid #DCE1E6;
-
-border-radius:14px;
-
-}
-
-.search-icon{
-
-position:absolute;
-
-right:18px;
-
-top:50%;
-
-transform:translateY(-50%);
-
-}
-
-/* TABLE */
-
-.table-card{
-
-background:white;
-
-border-radius:18px;
-
-padding:20px;
-
-border:1px solid #E5E7EB;
-
-box-shadow:
-
-0 8px 30px rgba(0,0,0,.05);
-
-overflow:auto;
-
-}
-
-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-thead{
-
-background:
-
-linear-gradient(
-90deg,
-#2563EB,
-#3B82F6
-);
-
-}
-
-thead th{
-
-padding:18px;
-
-color:white;
-
-text-align:left;
-
-}
-
-tbody td{
-
-padding:14px;
-
-border-bottom:
-
-1px solid #EEF2F7;
-
-}
-
-/* INPUTS */
-
-.readonly,
-
-.editable{
-
-width:100%;
-
-padding:12px;
-
-font-size:14px;
-
-border-radius:10px;
-
-}
-
-.readonly{
-
-background:#F1F5F9;
-
-border:none;
-
-color:#64748B;
-
-}
-
-.editable{
-
-background:transparent;
-
-border:1px solid transparent;
-
-}
-
-.editable:not(:disabled){
-
-background:white;
-
-border:1px solid #2563EB;
-
-}
-
-.editable:focus{
-
-outline:none;
-
-box-shadow:
-
-0 0 0 3px
-
-rgba(
-37,
-99,
-235,
-0.12
-);
-
-}
-
-/* ACTION */
-
-.action-bar{
-
-display:flex;
-
-justify-content:flex-end;
-
-gap:14px;
-
-margin-top:20px;
-
-}
-
-.edit-btn,
-
-.cancel-btn,
-
-.save-btn{
-
-padding:13px 22px;
-
-border:none;
-
-border-radius:12px;
-
-cursor:pointer;
-
-font-weight:700;
-
-}
-
-.edit-btn{
-
-background:#2563EB;
-
-color:white;
-
-}
-
-.cancel-btn{
-
-background:#E2E8F0;
-
-}
-
-.save-btn{
-
-background:#0F172A;
-
-color:white;
-
-}
-
-.save-btn:disabled{
-
-opacity:.4;
-
-cursor:not-allowed;
-
-}
-
+  .sp-page {
+    --sp-text: #0F172A;
+    --sp-muted: #64748B;
+    --sp-faint: #94A3B8;
+    --sp-border: #E2E8F0;
+    --sp-surface: #F8FAFC;
+    --sp-accent: #0F6E56;
+    --sp-accent-soft: #E1F5EE;
+    --sp-warn: #B45309;
+    --sp-warn-soft: #FEF3E2;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--sp-text);
+  }
+
+  .sp-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+
+  .sp-title { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+  .sp-subtitle { font-size: 13px; color: var(--sp-muted); }
+
+  .sp-header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Search */
+  .sp-search { position: relative; width: 260px; }
+
+  .sp-search input {
+    width: 100%;
+    padding: 9px 14px 9px 36px;
+    font: inherit;
+    font-size: 13px;
+    color: var(--sp-text);
+    background: #fff;
+    border: 1px solid var(--sp-border);
+    border-radius: 10px;
+    transition: border-color .15s, box-shadow .15s;
+  }
+
+  .sp-search input::placeholder { color: var(--sp-faint); }
+
+  .sp-search input:focus {
+    outline: none;
+    border-color: var(--sp-accent);
+    box-shadow: 0 0 0 3px rgba(15,110,86,.12);
+  }
+
+  .sp-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    color: var(--sp-faint);
+    pointer-events: none;
+  }
+
+  /* Mode pill — reflects whether the form is read-only or editable */
+  .sp-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background .15s, color .15s;
+  }
+
+  .sp-mode i { font-size: 13px; }
+  .sp-mode--view { background: var(--sp-accent-soft); color: var(--sp-accent); }
+  .sp-mode--edit { background: var(--sp-warn-soft); color: var(--sp-warn); }
+
+  /* Buttons */
+  .sp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: inherit;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background .15s, opacity .15s;
+  }
+
+  .sp-btn i { font-size: 15px; }
+  .sp-btn:focus-visible { outline: 2px solid var(--sp-accent); outline-offset: 2px; }
+
+  .sp-btn--primary { background: var(--sp-accent); color: #fff; }
+  .sp-btn--primary:hover:not(:disabled) { background: #0C5C48; }
+  .sp-btn--primary:disabled { background: #CBD5E1; color: #fff; cursor: not-allowed; }
+
+  .sp-btn--ghost { background: #fff; border: 1px solid var(--sp-border); color: #475569; }
+  .sp-btn--ghost:hover { background: var(--sp-surface); }
+
+  .sp-btn--dark { background: var(--sp-text); color: #fff; }
+  .sp-btn--dark:hover:not(:disabled) { background: #1E293B; }
+  .sp-btn--dark:disabled { background: #E2E8F0; color: #94A3B8; cursor: not-allowed; }
+
+  /* Table */
+  .sp-table-wrap {
+    border: 1px solid var(--sp-border);
+    border-radius: 14px;
+    overflow: auto;
+  }
+
+  .sp-table { width: 100%; border-collapse: collapse; }
+
+  .sp-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--sp-muted);
+    background: var(--sp-surface);
+    border-bottom: 1px solid var(--sp-border);
+  }
+
+  .sp-table tbody td {
+    padding: 10px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid var(--sp-surface);
+  }
+
+  .sp-table tbody tr:last-child td { border-bottom: none; }
+  .sp-table tbody tr:hover { background: #FAFBFD; }
+
+  .sp-mono {
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 13px;
+    color: var(--sp-muted);
+  }
+
+  .sp-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--sp-text);
+    background: var(--sp-surface);
+    border: 1px solid var(--sp-border);
+    border-radius: 6px;
+  }
+
+  .sp-name-cell { display: flex; align-items: center; gap: 10px; }
+
+  .sp-avatar {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--sp-accent);
+    background: var(--sp-accent-soft);
+    border-radius: 999px;
+  }
+
+  /* Editable fields — flat text in view mode, boxed once editing starts */
+  .sp-field {
+    width: 100%;
+    padding: 7px 10px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--sp-text);
+    -webkit-text-fill-color: var(--sp-text);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    opacity: 1;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+  }
+
+  .sp-field:disabled { cursor: default; }
+
+  .sp-field:not(:disabled) {
+    background: #fff;
+    border-color: var(--sp-accent);
+    cursor: auto;
+  }
+
+  .sp-field:not(:disabled):focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(15,110,86,.12);
+  }
+
+  /* Action bar */
+  .sp-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  /* Empty search state */
+  .sp-empty {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 0;
+    color: var(--sp-muted);
+  }
+
+  .sp-empty i { font-size: 28px; color: var(--sp-faint); }
+  .sp-empty p { font-size: 13px; }
+  .sp-empty.is-visible { display: flex; }
+
+  @media (max-width: 720px) {
+    .sp-search { width: 100%; }
+    .sp-header-right { width: 100%; }
+  }
 </style>
 
 <script>
+  function rowSearchText(row) {
+    const parts = [];
+    row.querySelectorAll('input, select').forEach(el => parts.push(el.value || ''));
+    row.querySelectorAll('.sp-tag, .sp-mono').forEach(el => parts.push(el.textContent || ''));
+    return parts.join(' ').toLowerCase();
+  }
 
-function filterStudents(){
+  function filterStudents() {
+    const query = document.getElementById('studentSearch').value.trim().toLowerCase();
+    const rows = document.querySelectorAll('#studentTable tbody tr');
+    let visible = 0;
 
-let search=
+    rows.forEach(row => {
+      const match = rowSearchText(row).includes(query);
+      row.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
 
-document
-.getElementById(
-"studentSearch"
-)
-.value
-.trim()
-.toLowerCase();
+    document.getElementById('studentTable').style.display = visible === 0 ? 'none' : '';
+    document.getElementById('noResults').classList.toggle('is-visible', visible === 0);
+  }
 
-let rows=
+  function enableEdit() {
+    document.querySelectorAll('.sp-field').forEach(el => el.disabled = false);
+    document.getElementById('saveBtn').disabled = false;
+    document.getElementById('editBtn').disabled = true;
 
-document
-.querySelectorAll(
-"#studentTable tbody tr"
-);
+    const mode = document.getElementById('modeLabel');
+    mode.className = 'sp-mode sp-mode--edit';
+    mode.innerHTML = '<i class="ti ti-pencil"></i> Edit mode';
+  }
 
-rows.forEach(row=>{
-
-let cells=
-
-row.querySelectorAll(
-"td"
-);
-
-let searchable="";
-
-cells.forEach(cell=>{
-
-let input=
-
-cell.querySelector(
-"input,select"
-);
-
-if(input){
-
-searchable+=
-(
-input.value || ""
-)
-.toLowerCase()
-+" ";
-
-}
-
-else{
-
-searchable+=
-(
-cell.textContent || ""
-)
-.toLowerCase()
-+" ";
-
-}
-
-});
-
-row.style.display=
-
-searchable.includes(search)
-
-?
-
-""
-
-:
-
-"none";
-
-});
-
-}
-
-function enableEdit(){
-
-document
-.querySelectorAll(
-".editable"
-)
-.forEach(
-
-x=>x.disabled=false
-
-);
-
-document
-.getElementById(
-"saveBtn"
-)
-.disabled=false;
-
-document
-.getElementById(
-"modeLabel"
-)
-.innerText=
-
-"EDIT MODE";
-
-}
-
-function cancelEdit(){
-
-location.reload();
-
-}
-
+  function cancelEdit() {
+    location.reload();
+  }
 </script>
 
 </html>
