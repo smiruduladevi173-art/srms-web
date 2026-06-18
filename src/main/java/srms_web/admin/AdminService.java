@@ -10,16 +10,18 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import srms_web.database.DBConnection;
+import srms_web.model.AnalyticsSummary;
 import srms_web.model.Department;
 import srms_web.model.Subject;
-
+import srms_web.model.TopStudent;
 import srms_web.auth.PasswordUtil;
 import srms_web.model.Student;
 import srms_web.model.StudentInfo;
 
+
+
 @Service
 public class AdminService {
-
 
 //=========================
 // GET DEPARTMENTS
@@ -1085,6 +1087,278 @@ e.printStackTrace();
 return false;
 
 }
+
+//==========================
+// GET ANALYTICS SUMMARY
+//==========================
+public AnalyticsSummary
+getAnalyticsSummary(){
+
+    AnalyticsSummary summary =
+            new AnalyticsSummary();
+
+    try(
+
+            Connection con =
+                    DBConnection.getConnection()
+
+    ){
+
+        // =====================
+        // TOTAL STUDENTS
+        // =====================
+
+        PreparedStatement ps1 =
+                con.prepareStatement(
+                        """
+                        SELECT COUNT(*)
+                        FROM students
+                        """
+                );
+
+        ResultSet rs1 =
+                ps1.executeQuery();
+
+        if(rs1.next()){
+
+            summary.setTotalStudents(
+                    rs1.getInt(1)
+            );
+
+        }
+
+        // =====================
+        // TOTAL DEPARTMENTS
+        // =====================
+
+        PreparedStatement ps2 =
+                con.prepareStatement(
+                        """
+                        SELECT COUNT(*)
+                        FROM departments
+                        """
+                );
+
+        ResultSet rs2 =
+                ps2.executeQuery();
+
+        if(rs2.next()){
+
+            summary.setTotalDepartments(
+                    rs2.getInt(1)
+            );
+
+        }
+
+        // =====================
+        // TOTAL SUBJECTS
+        // =====================
+
+        PreparedStatement ps3 =
+                con.prepareStatement(
+                        """
+                        SELECT COUNT(*)
+                        FROM subjects
+                        """
+                );
+
+        ResultSet rs3 =
+                ps3.executeQuery();
+
+        if(rs3.next()){
+
+            summary.setTotalSubjects(
+                    rs3.getInt(1)
+            );
+
+        }
+
+        // =====================
+        // OVERALL AVERAGE
+        // =====================
+
+        PreparedStatement ps4 =
+                con.prepareStatement(
+                        """
+                        SELECT AVG(marks)
+                        FROM marks
+                        """
+                );
+
+        ResultSet rs4 =
+                ps4.executeQuery();
+
+        if(rs4.next()){
+
+            summary.setOverallAverage(
+                    rs4.getDouble(1)
+            );
+
+        }
+
+        // =====================
+        // STUDENTS CLEARED
+        // =====================
+
+        PreparedStatement ps5 =
+                con.prepareStatement(
+                        """
+                        SELECT COUNT(*)
+
+                        FROM(
+
+                            SELECT
+                            student_id
+
+                            FROM marks
+
+                            GROUP BY student_id
+
+                            HAVING MIN(marks) >= 35
+
+                        )
+                        """
+                );
+
+        ResultSet rs5 =
+                ps5.executeQuery();
+
+        if(rs5.next()){
+
+            summary.setPassedStudents(
+                    rs5.getInt(1)
+            );
+
+        }
+
+        // =====================
+        // STUDENTS WITH ARREARS
+        // =====================
+
+        summary.setFailedStudents(
+
+                summary.getTotalStudents()
+
+                -
+
+                summary.getPassedStudents()
+
+        );
+
+        System.out.println(
+                "SUMMARY GENERATED"
+        );
+
+    }
+    catch(Exception e){
+
+        e.printStackTrace();
+
+    }
+
+    return summary;
+
+}
+
+
+//=========================
+// GET TOP STUDENTS
+//=========================
+public List<TopStudent>
+getTopStudents(){
+
+    List<TopStudent> students =
+            new ArrayList<>();
+
+    String sql =
+            """
+            SELECT
+
+            s.roll_number,
+
+            s.name,
+
+            d.department_name,
+
+            AVG(m.marks)
+            AS average_marks
+
+            FROM students s
+
+            JOIN marks m
+            ON s.student_id=m.student_id
+
+            JOIN departments d
+            ON s.department_id=d.id
+
+            GROUP BY
+            s.student_id
+
+            ORDER BY
+            average_marks DESC
+
+            LIMIT 10
+            """;
+
+    try(
+
+            Connection con =
+                    DBConnection.getConnection();
+
+            PreparedStatement ps =
+                    con.prepareStatement(sql);
+
+            ResultSet rs =
+                    ps.executeQuery()
+
+    ){
+
+        while(rs.next()){
+
+            TopStudent student =
+                    new TopStudent();
+
+            student.setRollNumber(
+                    rs.getString(
+                            "roll_number"
+                    )
+            );
+
+            student.setName(
+                    rs.getString(
+                            "name"
+                    )
+            );
+
+            student.setDepartment(
+                    rs.getString(
+                            "department_name"
+                    )
+            );
+
+            student.setAverage(
+                    rs.getDouble(
+                            "average_marks"
+                    )
+            );
+
+            students.add(
+                    student
+            );
+
+        }
+
+    }
+    catch(Exception e){
+
+        e.printStackTrace();
+
+    }
+
+    return students;
+
+}
+
 
 
 

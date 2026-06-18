@@ -1,1 +1,383 @@
-<h1>ANALYTICS MANAGEMENT - GENERATE OVERALL ANALYTICS</h1>
+<style>
+
+.analytics-cards{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:25px;
+
+    margin-bottom:40px;
+
+}
+
+.analytics-box{
+
+    background:#FFFFFF;
+
+    padding:28px;
+
+    border-radius:22px;
+
+    border:1px solid #E2E8F0;
+
+    box-shadow:
+    0 8px 30px rgba(15,23,42,.08);
+
+    transition:.3s;
+
+}
+
+.analytics-box:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.analytics-box h3{
+
+    color:#64748B;
+
+    font-size:15px;
+
+    margin-bottom:15px;
+
+}
+
+.analytics-box h2{
+
+    color:#2563EB;
+
+    font-size:38px;
+
+    font-weight:700;
+
+}
+
+.chart-container{
+
+    background:#FFFFFF;
+
+    padding:25px;
+
+    border-radius:24px;
+
+    border:1px solid #E2E8F0;
+
+    box-shadow:
+    0 8px 30px rgba(15,23,42,.08);
+
+    margin-top:25px;
+
+    margin-bottom:40px;
+
+    height:500px;
+
+}
+
+.analytics-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+    overflow:hidden;
+
+    border-radius:18px;
+
+    background:white;
+
+}
+
+.analytics-table th{
+
+    background:#2563EB;
+
+    color:white;
+
+    padding:16px;
+
+    font-size:15px;
+
+}
+
+.analytics-table td{
+
+    padding:16px;
+
+    border-bottom:1px solid #E2E8F0;
+
+}
+
+.analytics-table tr:hover{
+
+    background:#F8FAFC;
+
+}
+
+.section-title{
+
+    color:#0F172A;
+
+    margin-bottom:20px;
+
+    font-size:26px;
+
+    font-weight:700;
+
+}
+
+hr{
+
+    border:none;
+
+    height:1px;
+
+    background:#E2E8F0;
+
+    margin:40px 0;
+
+}
+
+</style>
+
+
+<br>
+
+<h1 class="section-title">
+📊 Analytics Dashboard
+</h1>
+
+<div class="analytics-cards">
+
+    <!-- Row 1 -->
+
+    <div class="analytics-box">
+
+        <h3>👨‍🎓 Total Students</h3>
+
+        <h2
+        th:text="${summary.totalStudents}">
+        0
+        </h2>
+
+    </div>
+
+    <div class="analytics-box">
+
+        <h3>🏢 Departments</h3>
+
+        <h2
+        th:text="${summary.totalDepartments}">
+        0
+        </h2>
+
+    </div>
+
+    <div class="analytics-box">
+
+        <h3>📚 Subjects</h3>
+
+        <h2
+        th:text="${summary.totalSubjects}">
+        0
+        </h2>
+
+    </div>
+
+
+    <!-- Row 2 -->
+
+    <div class="analytics-box">
+
+        <h3>📈 Overall Average</h3>
+
+        <h2
+        th:text="${#numbers.formatDecimal(summary.overallAverage,1,2)}+'%'">
+        0%
+        </h2>
+
+    </div>
+
+    <div class="analytics-box">
+
+        <h3>✅ Cleared Students</h3>
+
+        <h2
+        th:text="${summary.passedStudents}">
+        0
+        </h2>
+
+    </div>
+
+    <div class="analytics-box">
+
+        <h3>📕 Students With Arrears</h3>
+
+        <h2
+        th:text="${summary.failedStudents}">
+        0
+        </h2>
+
+    </div>
+
+</div>
+
+<hr>
+
+<h2>📊 Top 10 Performance Chart</h2>
+
+<div class="chart-container">
+
+    <canvas id="topStudentsChart"></canvas>
+
+</div>
+
+<hr>
+
+<h2>🏆 Top 10 Performing Students</h2>
+
+<table class="analytics-table">
+
+    <thead>
+
+    <tr>
+
+        <th>Rank</th>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Average %</th>
+
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    <tr
+    th:each="student,stat : ${topStudents}">
+
+        <td>
+
+            <span th:if="${stat.count==1}">
+                🥇
+            </span>
+
+            <span th:if="${stat.count==2}">
+                🥈
+            </span>
+
+            <span th:if="${stat.count==3}">
+                🥉
+            </span>
+
+            <span
+            th:if="${stat.count>3}"
+            th:text="${stat.count}">
+            </span>
+
+        </td>
+
+        <td th:text="${student.rollNumber}">
+            C001
+        </td>
+
+        <td th:text="${student.name}">
+            Student Name
+        </td>
+
+        <td th:text="${student.department}">
+            CSE
+        </td>
+
+        <td
+        th:text="${#numbers.formatDecimal(student.average,1,2)} + '%'">
+            90%
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+
+<input
+type="hidden"
+id="labels"
+th:value="${topStudents.![rollNumber]}"
+>
+
+<input
+type="hidden"
+id="averages"
+th:value="${topStudents.![average]}"
+>
+
+<input
+type="hidden"
+id="departments"
+th:value="${topStudents.![department]}"
+>
+
+<input
+type="hidden"
+id="names"
+th:value="${topStudents.![name]}"
+>
+
+<script>
+
+window.onload=function(){
+
+const averages =
+document
+.getElementById("averages")
+.value
+.replaceAll("[","")
+.replaceAll("]","")
+.split(",")
+.map(x => parseFloat(x));
+
+const names =
+document
+.getElementById("names")
+.value
+.replaceAll("[","")
+.replaceAll("]","")
+.split(",")
+.map(x => x.trim());
+
+const departments =
+document
+.getElementById("departments")
+.value
+.replaceAll("[","")
+.replaceAll("]","")
+.split(",")
+.map(x => x.trim());
+
+new Chart(
+document.getElementById("topStudentsChart"),
+{
+    type:"bar",
+
+    data:{
+        labels:names.map(
+            (name,index)=>
+            name + "\n" + "[" +  departments[index] +"]"
+        ),
+
+        datasets:[{
+            label:"Average Marks",
+            data:averages
+        }]
+    }
+}
+);
+
+};
+
+</script>

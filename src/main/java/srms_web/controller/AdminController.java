@@ -1,5 +1,9 @@
 package srms_web.controller;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,11 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-
+import srms_web.model.AnalyticsSummary;
 import srms_web.model.Student;
 
-
 import srms_web.admin.AdminService;
+import srms_web.database.DBConnection;
+
+import java.sql.Connection;
 
 @Controller
 public class AdminController {
@@ -576,8 +582,37 @@ return
 
 }
 
+//=====================
+// ANALYTICS PAGE
+//=====================
 
+@GetMapping("/admin/analytics")
+public String analytics(
+        Model model
+){
 
+    model.addAttribute(
+            "activePage",
+            "analytics"
+    );
+
+    model.addAttribute(
+            "summary",
+            adminService.getAnalyticsSummary()
+    );
+
+    model.addAttribute(
+            "topStudents",
+            adminService.getTopStudents()
+    );
+
+    model.addAttribute(
+            "view",
+            "fragments/admin-analytics-content"
+    );
+
+    return "admin-dashboard";
+}
 
 
 
